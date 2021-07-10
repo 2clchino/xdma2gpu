@@ -376,6 +376,12 @@ static ssize_t char_sgdma_read_write(struct file *file, const char __user *buf,
 		return -EINVAL;
 	}
 
+	if (write)
+	  printk("You write %zu", count);
+	else
+	  printk("You read %zu", count);
+
+	  
 	rv = check_transfer_align(engine, buf, count, *pos, 1);
 	if (rv) {
 		pr_info("Invalid transfer alignment detected\n");
@@ -744,6 +750,8 @@ static long char_sgdma_ioctl(struct file *file, unsigned int cmd,
 	if (rv < 0)
 		return rv;
 
+	printk("aaa");
+	
 	xdev = xcdev->xdev;
 	engine = xcdev->engine;
 
