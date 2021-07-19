@@ -737,6 +737,13 @@ static int ioctl_do_align_get(struct xdma_engine *engine, unsigned long arg)
 	return put_user(engine->addr_align, (int __user *)arg);
 }
 
+static int ioctl_try(struct xdma_engine *engine, unsigned long arg)
+{
+  printk("bbb");
+  printk("%lu", arg);
+	return 0;
+}
+
 static long char_sgdma_ioctl(struct file *file, unsigned int cmd,
 		unsigned long arg)
 {
@@ -773,6 +780,9 @@ static long char_sgdma_ioctl(struct file *file, unsigned int cmd,
 		break;
 	case IOCTL_XDMA_ALIGN_GET:
 		rv = ioctl_do_align_get(engine, arg);
+		break;
+	case IOCTL_XDMA_TRY:
+	  	rv = ioctl_try(engine, arg);
 		break;
 	default:
 		dbg_perf("Unsupported operation\n");

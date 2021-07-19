@@ -5,12 +5,19 @@
 #include <linux/ioctl.h>
 #include <sys/ioctl.h>
 
-#define IOCTL_TRY    _IOR('q', 7, int)
+#define IOCTL_XDMA_TRY          _IOR('q', 7, struct xdma_read_ioctl *)
+
+typedef struct xdma_read_ioctl{
+  int value;
+  size_t count;
+} dma_read;
 
 int main(){
   static const int bufsize=1024;
   static const int buf_offset = 13;
   static const int msg_len = 32;  // must be even
+
+  
 
   // ------------------------------------------------------------
   // Open XDMA channels
@@ -52,7 +59,9 @@ int main(){
     txbuf[i+buf_offset] = i%256;
   }
   
-  ioctl(fd_i, IOCTL_TRY, 0);
+  dma_read tmp = { 10, 5};
+  
+  ioctl(fd_i, IOCTL_XDMA_TRY, tmp);
   // unlocked_ioctl(fd_i, 0, 0);
   // read (fd_i, &rxbuf[buf_offset], msg_len);
 
