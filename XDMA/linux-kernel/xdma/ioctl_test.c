@@ -2,6 +2,10 @@
 #include <unistd.h> // read(), open(), close()
 #include <fcntl.h>
 #include <stdlib.h> // posix_memalign()
+#include <linux/ioctl.h>
+#include <sys/ioctl.h>
+
+#define IOCTL_TRY    _IOR('q', 7, int)
 
 int main(){
   static const int bufsize=1024;
@@ -48,7 +52,8 @@ int main(){
     txbuf[i+buf_offset] = i%256;
   }
   
-  unlocked_ioctl(fd_o, 0, 1);
+  ioctl(fd_i, IOCTL_TRY, 0);
+  // unlocked_ioctl(fd_i, 0, 0);
   // read (fd_i, &rxbuf[buf_offset], msg_len);
 
   for (int i=0; i<msg_len; i++){
