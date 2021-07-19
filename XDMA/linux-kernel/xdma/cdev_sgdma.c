@@ -765,7 +765,7 @@ static int ioctl_try(struct xdma_engine *engine, unsigned long arg)
 	}
 	*/
   
-  	printk("%lu", arg);
+  	printk("%p", arg);
 	return 0;
 }
 
