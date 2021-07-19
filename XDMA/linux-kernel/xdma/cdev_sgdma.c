@@ -740,6 +740,7 @@ static int ioctl_do_align_get(struct xdma_engine *engine, unsigned long arg)
 static int ioctl_try(struct xdma_engine *engine, unsigned long arg)
 {
 	printk("bbb");
+	/*
 	int rc;
 
 	if (!engine) {
@@ -762,6 +763,7 @@ static int ioctl_try(struct xdma_engine *engine, unsigned long arg)
 		printk("engine->xdma_perf == NULL?\n");
 		return -EPROTO;
 	}
+	*/
   
   	printk("%lu", arg);
 	return 0;
