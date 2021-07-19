@@ -59,7 +59,7 @@ struct xdma_performance_ioctl {
 };
 
 typedef struct xdma_read_ioctl{
-  int value;
+  char *value;
   size_t count;
 } dma_read;
 

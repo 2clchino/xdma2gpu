@@ -8,7 +8,7 @@
 #define IOCTL_XDMA_TRY          _IOR('q', 7, struct xdma_read_ioctl *)
 
 typedef struct xdma_read_ioctl{
-  char *value;
+  int value;
   size_t count;
 } dma_read;
 
