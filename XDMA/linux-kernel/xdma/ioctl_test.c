@@ -38,6 +38,7 @@ int main(){
   // Buffer allocation
   
   char *txbuf, *rxbuf;
+  char hoge[100];
   int rv;
 
   rv = posix_memalign((void*)&txbuf, 4096, bufsize);
@@ -58,10 +59,10 @@ int main(){
   for (int i=0; i<msg_len; i++){
     txbuf[i+buf_offset] = i%256;
   }
+  strcpy(hoge, “Hello”);
+  dma_read tmp = { &hoge, msg_len};
   
-  dma_read tmp = { &rxbuf[buf_offset], msg_len};
-  
-  ioctl(fd_i, IOCTL_XDMA_TRY, tmp);
+  ioctl(fd_i, IOCTL_XDMA_TRY, &tmp);
   // unlocked_ioctl(fd_i, 0, 0);
   // read (fd_i, &rxbuf[buf_offset], msg_len);
 

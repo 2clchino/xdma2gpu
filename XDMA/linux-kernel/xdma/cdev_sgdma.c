@@ -739,33 +739,14 @@ static int ioctl_do_align_get(struct xdma_engine *engine, unsigned long arg)
 
 static int ioctl_try(struct xdma_engine *engine, unsigned long arg)
 {
+	int rv;
 	printk("bbb");
-	/*
-	int rc;
+	dma_read tmp;
+	rv = copy_from_user(tmp,
+		(struct xdma_read_ioctl __user *)arg,
+		sizeof(struct xdma_read_ioctl));
 
-	if (!engine) {
-		pr_err("Invalid DMA engine\n");
-		return -EINVAL;
-	}
-
-	printk("IOCTL_XDMA_PERF_GET\n");
-
-	if (engine->xdma_perf) {
-		get_perf_stats(engine);
-
-		rc = copy_to_user((void __user *)arg, engine->xdma_perf,
-			sizeof(struct xdma_read_ioctl));
-		if (rc) {
-			printk("Error copying result to user\n");
-			return rc;
-		}
-	} else {
-		printk("engine->xdma_perf == NULL?\n");
-		return -EPROTO;
-	}
-	*/
-  
-  	printk("%p", arg);
+  	printk("%zu", tmp.count);
 	return 0;
 }
 
