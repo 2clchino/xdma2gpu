@@ -3152,6 +3152,8 @@ ssize_t xdma_xfer_submit(void *dev_hndl, int channel, bool write, u64 ep_addr,
 	enum dma_data_direction dir = write ? DMA_TO_DEVICE : DMA_FROM_DEVICE;
 	struct xdma_request_cb *req = NULL;
 
+	printk("submit1");
+
 	if (!dev_hndl)
 		return -EINVAL;
 
@@ -3212,13 +3214,13 @@ ssize_t xdma_xfer_submit(void *dev_hndl, int channel, bool write, u64 ep_addr,
 			return -EIO;
 		}
 	}
-
+	printk("submit2");
 	req = xdma_init_request(sgt, ep_addr);
 	if (!req) {
 		rv = -ENOMEM;
 		goto unmap_sgl;
 	}
-
+	printk("submit3");
 	dbg_tfr("%s, len %u sg cnt %u.\n", engine->name, req->total_len,
 		req->sw_desc_cnt);
 
@@ -3234,6 +3236,7 @@ ssize_t xdma_xfer_submit(void *dev_hndl, int channel, bool write, u64 ep_addr,
 		rv = transfer_init(engine, req, &req->tfer[0]);
 		if (rv < 0) {
 			mutex_unlock(&engine->desc_lock);
+			printk("submit4");
 			goto unmap_sgl;
 		}
 		xfer = &req->tfer[0];
@@ -3259,6 +3262,7 @@ ssize_t xdma_xfer_submit(void *dev_hndl, int channel, bool write, u64 ep_addr,
 		if (rv < 0) {
 			mutex_unlock(&engine->desc_lock);
 			pr_info("unable to submit %s, %d.\n", engine->name, rv);
+			printk("submit5");
 			goto unmap_sgl;
 		}
 
@@ -3348,6 +3352,7 @@ ssize_t xdma_xfer_submit(void *dev_hndl, int channel, bool write, u64 ep_addr,
 
 		if (rv < 0) {
 			mutex_unlock(&engine->desc_lock);
+			printk("%d", rv);
 			goto unmap_sgl;
 		}
 	} /* while (sg) */
@@ -3358,7 +3363,7 @@ unmap_sgl:
 		pci_unmap_sg(xdev->pdev, sgt->sgl, sgt->orig_nents, dir);
 		sgt->nents = 0;
 	}
-
+	printk("submit0");
 	if (req)
 		xdma_request_free(req);
 

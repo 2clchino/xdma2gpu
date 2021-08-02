@@ -2,11 +2,23 @@
 #include <unistd.h> // read(), open(), close()
 #include <fcntl.h>
 #include <stdlib.h> // posix_memalign()
+#include <linux/ioctl.h>
+#include <sys/ioctl.h>
+#include <string.h>
+
+#define IOCTL_XDMA_WRITE          _IOR('q', 8, struct xdma_read_ioctl *)
+
+typedef struct xdma_read_ioctl{
+  char *value;
+  size_t count;
+} dma_read;
 
 int main(){
   static const int bufsize=1024;
   static const int buf_offset = 13;
   static const int msg_len = 32;  // must be even
+
+  
 
   // ------------------------------------------------------------
   // Open XDMA channels
@@ -43,20 +55,24 @@ int main(){
     return -1;
   }
 
-  // ------------------------------------------------------------
-  // Fill buffer, send, receive and check.
+  // ------------------------------------------------------------  // Fill buffer, send, receive and check.
 
   for (int i=0; i<msg_len; i++){
     txbuf[i+buf_offset] = i%256;
   }
+  strcpy(addr, "Hello");
+  dma_read tmp = { addr, sizeof(hoge)};
   
-  write(fd_o, &txbuf[buf_offset], msg_len);
-  //read (fd_i, &rxbuf[buf_offset], msg_len);
+  ioctl(fd_i, IOCTL_XDMA_WRITE, &tmp);
+  // unlocked_ioctl(fd_i, 0, 0);
+  // read (fd_i, &rxbuf[buf_offset], msg_len);
   /*
   for (int i=0; i<msg_len; i++){
     printf("[%3d] %3d %3d\n", i, txbuf[i+buf_offset], rxbuf[i+buf_offset]);
   }
   */
+  printf("%s\n", tmp.value);
+  printf("%s\n", addr);
 
 
 

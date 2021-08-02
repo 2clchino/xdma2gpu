@@ -375,6 +375,7 @@ static ssize_t char_sgdma_read_write(struct file *file, const char __user *buf,
 			write, engine->dir);
 		return -EINVAL;
 	}
+	// printk("buf : %d", *buf);
 
 	if (write)
 	  printk("You write %zu", count);
@@ -737,6 +738,50 @@ static int ioctl_do_align_get(struct xdma_engine *engine, unsigned long arg)
 	return put_user(engine->addr_align, (int __user *)arg);
 }
 
+static int ioctl_write(struct xdma_dev *xdev, struct xdma_engine *engine, unsigned long arg){
+	int rv;
+	bool write = true;
+	ssize_t res = 0;
+	struct xdma_io_cb cb;
+	struct xdma_read_ioctl *tmp;
+	struct xdma_read_ioctl data;
+	char str[95];
+	loff_t pos = 0;
+	size_t count;
+	tmp = &data;
+	engine->dir = DMA_TO_DEVICE;
+	rv = copy_from_user(tmp,
+		(struct xdma_read_ioctl __user *)arg,
+		sizeof(struct xdma_read_ioctl));
+	rv = copy_from_user(str,
+			    (char __user *)tmp->value,
+			    tmp->count);
+	count = tmp->count;
+	rv = check_transfer_align(engine, str, count, pos, 1);
+	if (rv) {
+		pr_info("Invalid transfer alignment detected\n");
+		return rv;
+	}
+
+	memset(&cb, 0, sizeof(struct xdma_io_cb));
+	cb.buf = (char __user *)tmp->value;
+	cb.len = count;
+	cb.ep_addr = (u64)pos;
+	cb.write = write;
+	rv = char_sgdma_map_user_buf_to_sgl(&cb, write);
+	if (rv < 0){
+		printk("Maybe error!\n");
+		return rv;
+	}
+	res = xdma_xfer_submit(xdev, engine->channel, write, pos, &cb.sgt,
+				0, h2c_timeout * 1000);
+
+	char_sgdma_unmap_user_buf(&cb, write);
+	printk("Maybe no error %s\n", str);
+	return res;
+}
+
+
 static int ioctl_try(struct xdma_engine *engine, unsigned long arg)
 {
 	int rv;
@@ -797,6 +842,9 @@ static long char_sgdma_ioctl(struct file *file, unsigned int cmd,
 		break;
 	case IOCTL_XDMA_TRY:
 	  	rv = ioctl_try(engine, arg);
+		break;
+	case IOCTL_XDMA_WRITE:
+	  rv = ioctl_write(xdev, engine, arg);
 		break;
 	default:
 		dbg_perf("Unsupported operation\n");
