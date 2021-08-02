@@ -43,6 +43,7 @@ __used __section(__versions) = {
 	{ 0xabf63482, "pci_disable_msix" },
 	{ 0x4ad904da, "set_page_dirty_lock" },
 	{ 0xdf566a59, "__x86_indirect_thunk_r9" },
+	{ 0x56470118, "__warn_printk" },
 	{ 0x837b7b09, "__dynamic_pr_debug" },
 	{ 0xe70dc63b, "device_destroy" },
 	{ 0x6085601b, "kobject_set_name" },
@@ -209,4 +210,4 @@ MODULE_ALIAS("pci:v000010EEd00002808sv*sd*bc*sc*i*");
 MODULE_ALIAS("pci:v00001D0Fd0000F000sv*sd*bc*sc*i*");
 MODULE_ALIAS("pci:v00001D0Fd0000F001sv*sd*bc*sc*i*");
 
-MODULE_INFO(srcversion, "85CFAE8E2344197DFD608DF");
+MODULE_INFO(srcversion, "5A7306AB7D033E39F395ECE");

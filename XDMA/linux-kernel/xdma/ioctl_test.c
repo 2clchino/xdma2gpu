@@ -4,6 +4,7 @@
 #include <stdlib.h> // posix_memalign()
 #include <linux/ioctl.h>
 #include <sys/ioctl.h>
+#include <string.h>
 
 #define IOCTL_XDMA_TRY          _IOR('q', 7, struct xdma_read_ioctl *)
 
@@ -38,7 +39,8 @@ int main(){
   // Buffer allocation
   
   char *txbuf, *rxbuf;
-  char hoge[100];
+  char hoge[95];
+  char *addr;
   int rv;
 
   rv = posix_memalign((void*)&txbuf, 4096, bufsize);
@@ -53,22 +55,24 @@ int main(){
     return -1;
   }
 
-  // ------------------------------------------------------------
-  // Fill buffer, send, receive and check.
+  // ------------------------------------------------------------  // Fill buffer, send, receive and check.
 
   for (int i=0; i<msg_len; i++){
     txbuf[i+buf_offset] = i%256;
   }
-  strcpy(hoge, “Hello”);
-  dma_read tmp = { &hoge, msg_len};
+  strcpy(addr, "Hello");
+  dma_read tmp = { addr, sizeof(hoge)};
   
   ioctl(fd_i, IOCTL_XDMA_TRY, &tmp);
   // unlocked_ioctl(fd_i, 0, 0);
   // read (fd_i, &rxbuf[buf_offset], msg_len);
-
+  /*
   for (int i=0; i<msg_len; i++){
     printf("[%3d] %3d %3d\n", i, txbuf[i+buf_offset], rxbuf[i+buf_offset]);
   }
+  */
+  printf("%s\n", tmp.value);
+  printf("%s\n", addr);
 
 
 

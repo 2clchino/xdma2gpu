@@ -740,13 +740,21 @@ static int ioctl_do_align_get(struct xdma_engine *engine, unsigned long arg)
 static int ioctl_try(struct xdma_engine *engine, unsigned long arg)
 {
 	int rv;
+        struct xdma_read_ioctl *tmp;
+	struct xdma_read_ioctl data;
+	char str[95];
+	tmp = &data;
+
 	printk("bbb");
-	dma_read tmp;
 	rv = copy_from_user(tmp,
 		(struct xdma_read_ioctl __user *)arg,
 		sizeof(struct xdma_read_ioctl));
-
-  	printk("%zu", tmp.count);
+	rv = copy_from_user(str,
+			    (char __user *)tmp->value,
+			    tmp->count);
+	printk("str: %s", str);
+	// printk("str.value: %s", tmp->value);
+	// printk("ccc");
 	return 0;
 }
 
