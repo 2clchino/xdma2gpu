@@ -63,7 +63,8 @@ int main(){
   strcpy(addr, "Hello");
   dma_read tmp = { addr, sizeof(hoge)};
   
-  ioctl(fd_i, IOCTL_XDMA_WRITE, &tmp);
+  ioctl(fd_o, IOCTL_XDMA_WRITE, &tmp);
+  read (fd_i, addr, sizeof(hoge));
   // unlocked_ioctl(fd_i, 0, 0);
   // read (fd_i, &rxbuf[buf_offset], msg_len);
   /*

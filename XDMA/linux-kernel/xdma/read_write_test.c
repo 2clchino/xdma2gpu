@@ -51,7 +51,7 @@ int main(){
   }
   
   write(fd_o, &txbuf[buf_offset], msg_len);
-  //read (fd_i, &rxbuf[buf_offset], msg_len);
+  read (fd_i, &rxbuf[buf_offset], msg_len);
   /*
   for (int i=0; i<msg_len; i++){
     printf("[%3d] %3d %3d\n", i, txbuf[i+buf_offset], rxbuf[i+buf_offset]);

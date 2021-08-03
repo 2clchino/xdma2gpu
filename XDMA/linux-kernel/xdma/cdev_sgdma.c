@@ -770,14 +770,14 @@ static int ioctl_write(struct xdma_dev *xdev, struct xdma_engine *engine, unsign
 	cb.write = write;
 	rv = char_sgdma_map_user_buf_to_sgl(&cb, write);
 	if (rv < 0){
-		printk("Maybe error!\n");
+		printk("error!\n");
 		return rv;
 	}
 	res = xdma_xfer_submit(xdev, engine->channel, write, pos, &cb.sgt,
 				0, h2c_timeout * 1000);
 
 	char_sgdma_unmap_user_buf(&cb, write);
-	printk("Maybe no error %s\n", str);
+	printk("no error %s\n", str);
 	return res;
 }
 
