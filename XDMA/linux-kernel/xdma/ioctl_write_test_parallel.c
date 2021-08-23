@@ -5,7 +5,6 @@
 #include <linux/ioctl.h>
 #include <sys/ioctl.h>
 #include <string.h>
-#include <pthread.h>
 
 #define IOCTL_XDMA_WRITE          _IOR('q', 8, struct xdma_read_ioctl *)
 
@@ -13,33 +12,6 @@ typedef struct xdma_read_ioctl{
   char *value;
   size_t count;
 } dma_read;
-
-typedef struct parallel_write_arg{
-  int fd;
-  unsigned int cmd;
-  dma_read *data;
-} parallel_write;
-
-typedef struct parallel_read_arg{
-  int fd;
-  char *data;
-  size_t size;
-} parallel_read;
-
-void* write_test(void* p){
-  parallel_write* datas;
-  datas = (parallel_write*)p;
-  printf("write: %s\n", datas->data->value);
-  ioctl(datas->fd, datas->cmd, datas->data);
-  return NULL;
-}
-
-void* read_test(void* p){
-  parallel_read* datas;
-  datas = (parallel_read*)p;
-  printf("read: %s\n", datas->data);
-  read(datas->fd, datas->data, datas->size);
-}
 
 int main(){
   static const int bufsize=1024;
@@ -67,10 +39,9 @@ int main(){
   // Buffer allocation
   
   char *txbuf, *rxbuf;
-  char hoge[20];
-  char *addr, *addr2;
+  char hoge[95];
+  char *addr;
   int rv;
-  pthread_t thr1, thr2;
 
   rv = posix_memalign((void*)&txbuf, 4096, bufsize);
   if (rv != 0){
@@ -89,29 +60,20 @@ int main(){
   for (int i=0; i<msg_len; i++){
     txbuf[i+buf_offset] = i%256;
   }
-  strcpy(hoge, "Hello");
-  addr = &(hoge[0]);
+  strcpy(addr, "Hello");
   dma_read tmp = { addr, sizeof(hoge)};
-  parallel_write write_data = { fd_o, IOCTL_XDMA_WRITE, &tmp};
-  parallel_read read_data = { fd_i, addr, sizeof(hoge)};
-  pthread_create( &thr1, NULL, write_test, (void*)(&write_data));
-  pthread_create( &thr2, NULL, read_test, (void*)(&read_data));
-  printf("main :%s\n", write_data.data->value);
-  pthread_join(thr1, NULL);
-  pthread_join(thr2, NULL);
-  pthread_detach(thr1);
-  pthread_detach(thr2);
   
-  /*
   ioctl(fd_o, IOCTL_XDMA_WRITE, &tmp);
   read (fd_i, addr, sizeof(hoge));
-  unlocked_ioctl(fd_i, 0, 0);
-  read (fd_i, &rxbuf[buf_offset], msg_len);
+  // unlocked_ioctl(fd_i, 0, 0);
+  // read (fd_i, &rxbuf[buf_offset], msg_len);
+  /*
   for (int i=0; i<msg_len; i++){
     printf("[%3d] %3d %3d\n", i, txbuf[i+buf_offset], rxbuf[i+buf_offset]);
   }
   */
   printf("%s\n", tmp.value);
+  printf("%s\n", addr);
 
 
 
