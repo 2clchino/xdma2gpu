@@ -6,9 +6,9 @@
 #include <sys/ioctl.h>
 #include <string.h>
 
-#define IOCTL_XDMA_TRY          _IOR('q', 7, struct xdma_read_ioctl *)
+#define IOCTL_XDMA_TRY          _IOR('q', 7, struct xdma_data_ioctl *)
 
-typedef struct xdma_read_ioctl{
+typedef struct xdma_data_ioctl{
   char *value;
   size_t count;
 } dma_read;

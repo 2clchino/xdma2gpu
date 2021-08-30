@@ -57,11 +57,12 @@ struct xdma_performance_ioctl {
 	uint64_t data_cycle_count;
 	uint64_t pending_count;
 };
-
-typedef struct xdma_read_ioctl{
+/*
+typedef struct xdma_data_ioctl{
   char *value;
   size_t count;
 } dma_read;
+*/
 
 /* IOCTL codes */
 
@@ -71,7 +72,7 @@ typedef struct xdma_read_ioctl{
 #define IOCTL_XDMA_ADDRMODE_SET _IOW('q', 4, int)
 #define IOCTL_XDMA_ADDRMODE_GET _IOR('q', 5, int)
 #define IOCTL_XDMA_ALIGN_GET    _IOR('q', 6, int)
-#define IOCTL_XDMA_TRY          _IOR('q', 7, struct xdma_read_ioctl *)
-#define IOCTL_XDMA_WRITE          _IOR('q', 8, struct xdma_read_ioctl *)
+#define IOCTL_XDMA_TRY          _IOR('q', 7, struct xdma_data_ioctl *)
+#define IOCTL_XDMA_WRITE          _IOR('q', 8, struct xdma_data_ioctl *)
 
 #endif /* _XDMA_IOCALLS_POSIX_H_ */

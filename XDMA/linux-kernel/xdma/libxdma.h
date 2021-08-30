@@ -564,6 +564,12 @@ struct xdma_user_irq {
 	void *dev;
 };
 
+// 送受信データ構造(ドライバ記憶用)
+struct xdma_data_ioctl{
+  char *value;
+  size_t count;
+};
+
 /* XDMA PCIe device specific book-keeping */
 #define XDEV_FLAG_OFFLINE	0x1
 struct xdma_dev {
@@ -608,6 +614,8 @@ struct xdma_dev {
 	u32 mask_irq_c2h;
 	struct xdma_engine engine_h2c[XDMA_CHANNEL_NUM_MAX];
 	struct xdma_engine engine_c2h[XDMA_CHANNEL_NUM_MAX];
+
+	struct xdma_data_ioctl read_write_data;
 
 	/* SD_Accel specific */
 	enum dev_capabilities capabilities;

@@ -744,16 +744,17 @@ static int ioctl_write(struct xdma_dev *xdev, struct xdma_engine *engine, unsign
 	bool write = true;
 	ssize_t res = 0;
 	struct xdma_io_cb cb;
-	struct xdma_read_ioctl *tmp;
-	struct xdma_read_ioctl data;
+	struct xdma_data_ioctl *tmp;
+	struct xdma_data_ioctl data;
 	char str[95];
 	loff_t pos = 0;
 	size_t count;
 	tmp = &data;
 	engine->dir = DMA_TO_DEVICE;
 	rv = copy_from_user(tmp,
-		(struct xdma_read_ioctl __user *)arg,
-		sizeof(struct xdma_read_ioctl));
+		(struct xdma_data_ioctl __user *)arg,
+		sizeof(struct xdma_data_ioctl));
+	xdev->read_write_data = tmp;
 	rv = copy_from_user(str,
 			    (char __user *)tmp->value,
 			    tmp->count);
@@ -787,15 +788,15 @@ static int ioctl_write(struct xdma_dev *xdev, struct xdma_engine *engine, unsign
 static int ioctl_try(struct xdma_engine *engine, unsigned long arg)
 {
 	int rv;
-        struct xdma_read_ioctl *tmp;
-	struct xdma_read_ioctl data;
+        struct xdma_data_ioctl *tmp;
+	struct xdma_data_ioctl data;
 	char str[95];
 	tmp = &data;
 
 	printk("bbb");
 	rv = copy_from_user(tmp,
-		(struct xdma_read_ioctl __user *)arg,
-		sizeof(struct xdma_read_ioctl));
+		(struct xdma_data_ioctl __user *)arg,
+		sizeof(struct xdma_data_ioctl));
 	rv = copy_from_user(str,
 			    (char __user *)tmp->value,
 			    tmp->count);

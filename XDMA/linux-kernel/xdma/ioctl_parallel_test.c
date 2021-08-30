@@ -7,9 +7,9 @@
 #include <string.h>
 #include <pthread.h>
 
-#define IOCTL_XDMA_WRITE          _IOR('q', 8, struct xdma_read_ioctl *)
+#define IOCTL_XDMA_WRITE          _IOR('q', 8, struct xdma_data_ioctl *)
 
-typedef struct xdma_read_ioctl{
+typedef struct xdma_data_ioctl{
   char *value;
   size_t count;
 } dma_read;
