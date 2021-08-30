@@ -757,7 +757,7 @@ static int ioctl_write(struct xdma_dev *xdev, struct xdma_engine *engine, unsign
 	rv = copy_from_user(str,
 			    (char __user *)tmp->value,
 			    tmp->count);
-	tmp->value = &(str[0]);
+	// tmp->value = &(str[0]);
 	xdev->read_write_data = *tmp;
 	printk("str: %s", str);
 	printk("xdev: %s", xdev->read_write_data.value);
