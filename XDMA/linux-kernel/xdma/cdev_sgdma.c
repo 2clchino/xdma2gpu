@@ -760,7 +760,7 @@ static int ioctl_write(struct xdma_dev *xdev, struct xdma_engine *engine, unsign
 	// tmp->value = &(str[0]);
 	xdev->read_write_data = *tmp;
 	printk("str: %s", str);
-	printk("xdev: %s", xdev->read_write_data.value);
+	// printk("xdev: %s", xdev->read_write_data.value);
 	count = tmp->count;
 	rv = check_transfer_align(engine, str, count, pos, 1);
 	if (rv) {
