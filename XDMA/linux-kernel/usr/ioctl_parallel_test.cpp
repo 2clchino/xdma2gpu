@@ -10,7 +10,7 @@
 #include <string.h>
 #include <pthread.h>
 
-#define IOCTL_XDMA_WRITE          _IOR('q', 8, struct xdma_data_ioctl *)
+// #define IOCTL_XDMA_WRITE          _IOR('q', 8, struct xdma_data_ioctl *)
 
 typedef struct xdma_data_ioctl{
   char *value;
@@ -42,16 +42,10 @@ void* read_test(void* p){
   datas = (parallel_read*)p;
   printf("read: %s\n", datas->data);
   read(datas->fd, datas->data, datas->size);
-  retur NULL;
+  return NULL;
 }
 
 int main(){
-  // static const int bufsize=1024;
-  // static const int buf_offset = 13;
-  // static const int msg_len = 32;  // must be even
-
-  
-
   // ------------------------------------------------------------
   // Open XDMA channels
 
@@ -68,36 +62,17 @@ int main(){
   }
 
   // ------------------------------------------------------------
-  // Buffer allocation
-  
-  // char *txbuf, *rxbuf;
+  // Send and receive data
+
   char hoge[20];
   char *addr;
-  // int rv;
-  pthread_t thr1, thr2;
-  /*
-  rv = posix_memalign((void*)&txbuf, 4096, bufsize);
-  if (rv != 0){
-    printf("Can't allocate txbuf\n");
-    return -1;
-  }
+  //pthread_t thr1, thr2;
 
-  rv = posix_memalign((void*)&rxbuf, 4096, bufsize);
-  if (rv != 0){
-    printf("Can't allocate rxbuf\n");
-    return -1;
-  }
-  */
-
-  // ------------------------------------------------------------  // Fill buffer, send, receive and check.
-  /*
-  for (int i=0; i<msg_len; i++){
-    txbuf[i+buf_offset] = i%256;
-  }
-  */
   strcpy(hoge, "Hello");
   addr = &(hoge[0]);
   dma_read tmp = { addr, sizeof(hoge)};
+  ioctl(fd_i, IOCTL_XDMA_GPU, &tmp);
+  /*
   parallel_write write_data = { fd_o, IOCTL_XDMA_WRITE, &tmp};
   parallel_read read_data = { fd_i, addr, sizeof(hoge)};
   pthread_create( &thr1, NULL, write_test, (void*)(&write_data));
@@ -107,26 +82,15 @@ int main(){
   pthread_join(thr2, NULL);
   pthread_detach(thr1);
   pthread_detach(thr2);
-  
-  /*
-  ioctl(fd_o, IOCTL_XDMA_WRITE, &tmp);
-  read (fd_i, addr, sizeof(hoge));
-  unlocked_ioctl(fd_i, 0, 0);
-  read (fd_i, &rxbuf[buf_offset], msg_len);
-  for (int i=0; i<msg_len; i++){
-    printf("[%3d] %3d %3d\n", i, txbuf[i+buf_offset], rxbuf[i+buf_offset]);
-  }
   */
+  
   printf("%s\n", tmp.value);
 
 
 
   // ------------------------------------------------------------
   // Clean up
-
-  // free(txbuf);
-  // free(rxbuf);
-
+  
   close(fd_o);
   close(fd_i);
 }

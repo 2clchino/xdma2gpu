@@ -1,1 +1,0 @@
-cmd_/home/lab/shun/dma_ip_drivers/XDMA/linux-kernel/xdma/xdma.ko := ld -r -m elf_x86_64  -z max-page-size=0x200000  --build-id  -T ./scripts/module-common.lds -o /home/lab/shun/dma_ip_drivers/XDMA/linux-kernel/xdma/xdma.ko /home/lab/shun/dma_ip_drivers/XDMA/linux-kernel/xdma/xdma.o /home/lab/shun/dma_ip_drivers/XDMA/linux-kernel/xdma/xdma.mod.o;  true

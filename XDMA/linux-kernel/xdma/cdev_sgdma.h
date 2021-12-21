@@ -46,6 +46,39 @@
  * _IOC_SIZE(nr)	    returns size
  */
 
+//-----------------------------------------------------------------------------
+// for boundary alignment requirement
+#define GPU_BOUND_SHIFT 16
+#define GPU_BOUND_SIZE ((u64)1 << GPU_BOUND_SHIFT)
+#define GPU_BOUND_OFFSET (GPU_BOUND_SIZE-1)
+#define GPU_BOUND_MASK (~GPU_BOUND_OFFSET)
+
+//-----------------------------------------------------------------------------
+
+struct gpudma_lock_t {
+    void*    handle;
+    uint64_t addr;
+    uint64_t size;
+    size_t   page_count;
+};
+
+//-----------------------------------------------------------------------------
+
+struct gpudma_unlock_t {
+    void*    handle;
+};
+
+//-----------------------------------------------------------------------------
+
+struct gpudma_state_t {
+    void*       handle;
+    size_t      page_count;
+    size_t      page_size;
+    uint64_t    pages[1];
+};
+
+//-----------------------------------------------------------------------------
+
 struct xdma_performance_ioctl {
 	/* IOCTL_XDMA_IOCTL_Vx */
 	uint32_t version;
@@ -73,6 +106,7 @@ typedef struct xdma_data_ioctl{
 #define IOCTL_XDMA_ADDRMODE_GET _IOR('q', 5, int)
 #define IOCTL_XDMA_ALIGN_GET    _IOR('q', 6, int)
 #define IOCTL_XDMA_TRY          _IOR('q', 7, struct xdma_data_ioctl *)
-#define IOCTL_XDMA_WRITE          _IOR('q', 8, struct xdma_data_ioctl *)
+#define IOCTL_XDMA_WRITE        _IOR('q', 8, struct xdma_data_ioctl *)
+#define IOCTL_XDMA_GPU          _IOR('q', 9, struct xdma_data_ioctl *)
 
 #endif /* _XDMA_IOCALLS_POSIX_H_ */

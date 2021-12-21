@@ -739,6 +739,28 @@ static int ioctl_do_align_get(struct xdma_engine *engine, unsigned long arg)
 	return put_user(engine->addr_align, (int __user *)arg);
 }
 
+static int ioctl_gpudirect(struct xdma_engine *engine, unsigned long arg)
+{
+	int rv;
+        struct xdma_data_ioctl *tmp;
+	struct xdma_data_ioctl data;
+	char str[95];
+	tmp = &data;
+
+	printk("ioctl_gpudirect");
+	rv = copy_from_user(tmp,
+		(struct xdma_data_ioctl __user *)arg,
+		sizeof(struct xdma_data_ioctl));
+	rv = copy_from_user(str,
+			    (char __user *)tmp->value,
+			    tmp->count);
+	printk("str: %s", str);
+	// printk("str.value: %s", tmp->value);
+	// printk("ccc");
+	return 0;
+}
+
+
 static int ioctl_write(struct xdma_dev *xdev, struct xdma_engine *engine, unsigned long arg){
 	int rv;
 	bool write = true;
@@ -850,6 +872,9 @@ static long char_sgdma_ioctl(struct file *file, unsigned int cmd,
 		break;
 	case IOCTL_XDMA_WRITE:
 	  rv = ioctl_write(xdev, engine, arg);
+		break;
+	case IOCTL_XDMA_GPU:
+	  	rv = ioctl_gpudirect(engine, arg);
 		break;
 	default:
 		dbg_perf("Unsupported operation\n");
