@@ -107,6 +107,6 @@ typedef struct xdma_data_ioctl{
 #define IOCTL_XDMA_ALIGN_GET    _IOR('q', 6, int)
 #define IOCTL_XDMA_TRY          _IOR('q', 7, struct xdma_data_ioctl *)
 #define IOCTL_XDMA_WRITE        _IOR('q', 8, struct xdma_data_ioctl *)
-#define IOCTL_XDMA_GPU          _IOR('q', 9, struct xdma_data_ioctl *)
+#define IOCTL_XDMA_GPU          _IOR('q', 9, struct gpudma_lock_t *)
 
 #endif /* _XDMA_IOCALLS_POSIX_H_ */

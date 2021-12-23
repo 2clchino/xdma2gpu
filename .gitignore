@@ -2,3 +2,7 @@
 *.dwo
 *.o
 *.out
+*.ko
+XDMA/linux-kernel/NVIDIA-Linux-x86_64-470.57.02.run
+XDMA/linux-kernel/bin
+XDMA/linux-kernel/NVIDIA-Linux-x86_64-470.57.02/

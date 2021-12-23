@@ -741,23 +741,23 @@ static int ioctl_do_align_get(struct xdma_engine *engine, unsigned long arg)
 
 static int ioctl_gpudirect(struct xdma_engine *engine, unsigned long arg)
 {
-	int rv;
-        struct xdma_data_ioctl *tmp;
-	struct xdma_data_ioctl data;
-	char str[95];
-	tmp = &data;
+	int error = 0;
+	size_t pin_size = 0ULL;
+	struct gpumem_t *entry = 0;
+	struct gpudma_lock_t param;
 
 	printk("ioctl_gpudirect");
-	rv = copy_from_user(tmp,
-		(struct xdma_data_ioctl __user *)arg,
-		sizeof(struct xdma_data_ioctl));
-	rv = copy_from_user(str,
-			    (char __user *)tmp->value,
-			    tmp->count);
-	printk("str: %s", str);
-	// printk("str.value: %s", tmp->value);
-	// printk("ccc");
+	
+	if(copy_from_user(&param, (void *)arg, sizeof(struct gpudma_lock_t))) {
+	  printk(KERN_ERR"%s(): Error in copy_from_user()\n", __FUNCTION__);
+	  error = -EFAULT;
+	  goto do_exit;
+	}
+	
 	return 0;
+ do_exit:
+	printk("error!");
+	return error;
 }
 
 
