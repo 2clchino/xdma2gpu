@@ -12,8 +12,11 @@ $(warning XVC_FLAGS: $(XVC_FLAGS).)
 topdir := $(shell cd $(src)/.. && pwd)
 
 TARGET_MODULE:=xdma
+EMPTY_DRIVER_PATH := $(topdir)/empty_module
+KBUILD_EXTRA_SYMBOLS := $(EMPTY_DRIVER_PATH)/Module.symvers
 
 EXTRA_CFLAGS := -I$(topdir)/include $(XVC_FLAGS)
+EXTRA_CFLAGS += -I$(EMPTY_DRIVER_PATH)/
 #EXTRA_CFLAGS += -D__LIBXDMA_DEBUG__
 #EXTRA_CFLAGS += -DINTERNAL_TESTING
 

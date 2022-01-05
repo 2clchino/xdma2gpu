@@ -59,6 +59,7 @@ __used __section("__versions") = {
 	{ 0x88935827, "dma_free_attrs" },
 	{ 0x7a2af7b4, "cpu_number" },
 	{ 0x3c3ff9fd, "sprintf" },
+	{ 0xb6b11acb, "say_hello" },
 	{ 0xa52e8c96, "pv_ops" },
 	{ 0x1c5877fe, "dma_set_coherent_mask" },
 	{ 0x2831ba2d, "kthread_create_on_node" },
@@ -149,7 +150,7 @@ __used __section("__versions") = {
 	{ 0x8a35b432, "sme_me_mask" },
 };
 
-MODULE_INFO(depends, "");
+MODULE_INFO(depends, "test");
 
 MODULE_ALIAS("pci:v000010EEd00009048sv*sd*bc*sc*i*");
 MODULE_ALIAS("pci:v000010EEd00009044sv*sd*bc*sc*i*");
@@ -208,4 +209,4 @@ MODULE_ALIAS("pci:v000010EEd00002808sv*sd*bc*sc*i*");
 MODULE_ALIAS("pci:v00001D0Fd0000F000sv*sd*bc*sc*i*");
 MODULE_ALIAS("pci:v00001D0Fd0000F001sv*sd*bc*sc*i*");
 
-MODULE_INFO(srcversion, "FEAFC16658E470DCBE23A13");
+MODULE_INFO(srcversion, "DA5B687BD01EC52CAEAE11F");

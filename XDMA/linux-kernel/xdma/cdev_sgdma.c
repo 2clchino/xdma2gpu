@@ -35,6 +35,7 @@
 #include "xdma_cdev.h"
 #include "cdev_sgdma.h"
 #include "xdma_thread.h"
+#include "test.h"
 
 /* Module Parameters */
 unsigned int h2c_timeout = 10;
@@ -310,7 +311,7 @@ static int char_sgdma_map_user_buf_to_sgl(struct xdma_io_cb *cb, bool write)
 		pr_err("unable to pin down all %u user pages, %d.\n",
 			pages_nr, rv);
 		cb->pages_nr = rv;
-		rv = -EFAULT;
+ 		rv = -EFAULT;
 		goto err_out;
 	}
 
@@ -753,6 +754,9 @@ static int ioctl_gpudirect(struct xdma_engine *engine, unsigned long arg)
 	  error = -EFAULT;
 	  goto do_exit;
 	}
+	
+	printk("this is xdma module");
+	say_hello();
 	
 	return 0;
  do_exit:
