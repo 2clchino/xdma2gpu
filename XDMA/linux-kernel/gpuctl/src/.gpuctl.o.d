@@ -1,5 +1,5 @@
-test.o: \
- /home/lab/shun/dma_ip_drivers/XDMA/linux-kernel/empty_module/test.c \
+gpuctl.o: \
+ /home/lab/shun/dma_ip_drivers/XDMA/linux-kernel/gpuctl/./src/gpuctl.c \
  include/linux/kconfig.h include/generated/autoconf.h \
  include/linux/compiler_types.h include/linux/compiler_attributes.h \
  include/linux/compiler-gcc.h include/linux/module.h include/linux/list.h \
@@ -159,5 +159,110 @@ test.o: \
  include/linux/rbtree_latch.h include/linux/error-injection.h \
  include/asm-generic/error-injection.h include/linux/static_call_types.h \
  arch/x86/include/asm/module.h include/asm-generic/module.h \
- arch/x86/include/asm/orc_types.h \
- /home/lab/shun/dma_ip_drivers/XDMA/linux-kernel/empty_module/test.h
+ arch/x86/include/asm/orc_types.h include/linux/ioport.h \
+ include/linux/pci.h include/linux/mod_devicetable.h include/linux/uuid.h \
+ include/uapi/linux/uuid.h include/linux/device.h \
+ include/linux/dev_printk.h include/linux/ratelimit.h \
+ include/linux/sched.h include/uapi/linux/sched.h include/linux/pid.h \
+ include/linux/rculist.h include/linux/sem.h include/uapi/linux/sem.h \
+ include/linux/ipc.h include/linux/rhashtable-types.h \
+ include/uapi/linux/ipc.h arch/x86/include/generated/uapi/asm/ipcbuf.h \
+ include/uapi/asm-generic/ipcbuf.h arch/x86/include/uapi/asm/sembuf.h \
+ include/linux/shm.h include/uapi/linux/shm.h \
+ include/uapi/asm-generic/hugetlb_encode.h \
+ arch/x86/include/uapi/asm/shmbuf.h include/uapi/asm-generic/shmbuf.h \
+ arch/x86/include/asm/shmparam.h include/linux/kcov.h \
+ include/uapi/linux/kcov.h include/linux/plist.h include/linux/hrtimer.h \
+ include/linux/hrtimer_defs.h include/linux/timerqueue.h \
+ include/linux/seccomp.h include/uapi/linux/seccomp.h \
+ arch/x86/include/asm/seccomp.h arch/x86/include/asm/unistd.h \
+ arch/x86/include/uapi/asm/unistd.h \
+ arch/x86/include/generated/uapi/asm/unistd_64.h \
+ arch/x86/include/generated/asm/unistd_64_x32.h \
+ arch/x86/include/generated/asm/unistd_32_ia32.h \
+ arch/x86/include/asm/ia32_unistd.h include/asm-generic/seccomp.h \
+ include/uapi/linux/unistd.h include/linux/resource.h \
+ include/uapi/linux/resource.h \
+ arch/x86/include/generated/uapi/asm/resource.h \
+ include/asm-generic/resource.h include/uapi/asm-generic/resource.h \
+ include/linux/latencytop.h include/linux/sched/prio.h \
+ include/linux/sched/types.h include/linux/signal_types.h \
+ include/uapi/linux/signal.h arch/x86/include/asm/signal.h \
+ arch/x86/include/uapi/asm/signal.h \
+ include/uapi/asm-generic/signal-defs.h \
+ arch/x86/include/uapi/asm/siginfo.h include/uapi/asm-generic/siginfo.h \
+ include/linux/syscall_user_dispatch.h include/linux/task_io_accounting.h \
+ include/linux/posix-timers.h include/linux/alarmtimer.h \
+ include/linux/task_work.h include/uapi/linux/rseq.h \
+ include/linux/kcsan.h arch/x86/include/generated/asm/kmap_size.h \
+ include/asm-generic/kmap_size.h include/linux/energy_model.h \
+ include/linux/sched/cpufreq.h include/linux/sched/topology.h \
+ include/linux/sched/idle.h include/linux/sched/sd_flags.h \
+ include/linux/klist.h include/linux/pm.h include/linux/overflow.h \
+ include/linux/device/bus.h include/linux/device/class.h \
+ include/linux/device/driver.h arch/x86/include/asm/device.h \
+ include/linux/pm_wakeup.h include/linux/interrupt.h \
+ include/linux/irqreturn.h include/linux/irqnr.h \
+ include/uapi/linux/irqnr.h include/linux/hardirq.h \
+ include/linux/context_tracking_state.h include/linux/ftrace_irq.h \
+ include/linux/vtime.h arch/x86/include/asm/hardirq.h \
+ arch/x86/include/asm/irq.h arch/x86/include/asm/irq_vectors.h \
+ arch/x86/include/asm/sections.h include/asm-generic/sections.h \
+ arch/x86/include/asm/extable.h include/linux/io.h \
+ arch/x86/include/asm/io.h arch/x86/include/generated/asm/early_ioremap.h \
+ include/asm-generic/early_ioremap.h include/asm-generic/iomap.h \
+ include/asm-generic/pci_iomap.h include/asm-generic/io.h \
+ include/linux/logic_pio.h include/linux/fwnode.h include/linux/vmalloc.h \
+ arch/x86/include/asm/vmalloc.h arch/x86/include/asm/pgtable_areas.h \
+ include/linux/resource_ext.h include/linux/slab.h \
+ include/linux/percpu-refcount.h include/linux/kasan.h \
+ include/uapi/linux/pci.h include/uapi/linux/pci_regs.h \
+ include/linux/pci_ids.h include/linux/dmapool.h \
+ include/linux/scatterlist.h include/linux/mm.h include/linux/mmap_lock.h \
+ include/linux/bit_spinlock.h include/linux/shrinker.h \
+ include/linux/page_ext.h include/linux/stacktrace.h \
+ include/linux/stackdepot.h include/linux/page_ref.h \
+ include/linux/memremap.h include/linux/sizes.h include/linux/pgtable.h \
+ arch/x86/include/asm/pgtable.h arch/x86/include/asm/fpu/xstate.h \
+ include/linux/uaccess.h include/linux/fault-inject-usercopy.h \
+ arch/x86/include/asm/uaccess.h arch/x86/include/asm/smap.h \
+ arch/x86/include/asm/uaccess_64.h arch/x86/include/asm/fpu/api.h \
+ include/asm-generic/pgtable_uffd.h arch/x86/include/asm/pgtable_64.h \
+ arch/x86/include/asm/fixmap.h arch/x86/include/uapi/asm/vsyscall.h \
+ include/asm-generic/fixmap.h arch/x86/include/asm/pgtable-invert.h \
+ include/linux/huge_mm.h include/linux/sched/coredump.h \
+ include/linux/fs.h include/linux/wait_bit.h include/linux/kdev_t.h \
+ include/uapi/linux/kdev_t.h include/linux/dcache.h \
+ include/linux/rculist_bl.h include/linux/list_bl.h \
+ include/linux/lockref.h include/linux/stringhash.h include/linux/hash.h \
+ include/linux/path.h include/linux/list_lru.h include/linux/capability.h \
+ include/uapi/linux/capability.h include/linux/semaphore.h \
+ include/linux/fcntl.h include/uapi/linux/fcntl.h \
+ arch/x86/include/generated/uapi/asm/fcntl.h \
+ include/uapi/asm-generic/fcntl.h include/uapi/linux/openat2.h \
+ include/linux/migrate_mode.h include/linux/percpu-rwsem.h \
+ include/linux/rcuwait.h include/linux/sched/signal.h \
+ include/linux/signal.h include/linux/sched/jobctl.h \
+ include/linux/sched/task.h include/linux/cred.h include/linux/key.h \
+ include/linux/assoc_array.h include/linux/sched/user.h \
+ include/linux/rcu_sync.h include/linux/delayed_call.h \
+ include/linux/errseq.h include/linux/ioprio.h include/linux/sched/rt.h \
+ include/linux/iocontext.h include/linux/fs_types.h \
+ include/uapi/linux/fs.h include/linux/quota.h \
+ include/linux/percpu_counter.h include/uapi/linux/dqblk_xfs.h \
+ include/linux/dqblk_v1.h include/linux/dqblk_v2.h \
+ include/linux/dqblk_qtree.h include/linux/projid.h \
+ include/uapi/linux/quota.h include/linux/nfs_fs_i.h \
+ include/linux/vmstat.h include/linux/vm_event_item.h \
+ arch/x86/include/asm/pci.h arch/x86/include/asm/memtype.h \
+ include/asm-generic/pci.h include/linux/pci-dma-compat.h \
+ include/linux/dma-mapping.h include/linux/dma-direction.h \
+ include/linux/pagemap.h include/linux/highmem.h \
+ arch/x86/include/asm/cacheflush.h include/asm-generic/cacheflush.h \
+ include/linux/highmem-internal.h include/linux/hugetlb_inline.h \
+ include/linux/proc_fs.h \
+ /home/lab/shun/dma_ip_drivers/XDMA/linux-kernel/gpuctl/./src/gpumemdrv.h \
+ include/linux/cdev.h include/generated/uapi/linux/version.h \
+ /home/lab/shun/dma_ip_drivers/XDMA/linux-kernel/NVIDIA-Linux-x86_64-470.74/kernel/nvidia/nv-p2p.h \
+ /home/lab/shun/dma_ip_drivers/XDMA/linux-kernel/gpuctl/./src/gpuctl.h \
+ /home/lab/shun/dma_ip_drivers/XDMA/linux-kernel/gpuctl/./src/nvfs-p2p.h

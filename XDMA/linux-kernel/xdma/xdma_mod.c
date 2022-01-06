@@ -39,7 +39,7 @@ static char version[] =
 MODULE_AUTHOR("Xilinx, Inc.");
 MODULE_DESCRIPTION(DRV_MODULE_DESC);
 MODULE_VERSION(DRV_MODULE_VERSION);
-MODULE_LICENSE("Dual BSD/GPL");
+MODULE_LICENSE("Dual MIT/GPL");
 
 /* SECTION: Module global variables */
 static int xpdev_cnt;

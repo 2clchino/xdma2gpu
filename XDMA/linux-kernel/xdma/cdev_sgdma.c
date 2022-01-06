@@ -35,7 +35,7 @@
 #include "xdma_cdev.h"
 #include "cdev_sgdma.h"
 #include "xdma_thread.h"
-#include "test.h"
+#include "src/gpuctl.h"
 
 /* Module Parameters */
 unsigned int h2c_timeout = 10;
@@ -748,15 +748,15 @@ static int ioctl_gpudirect(struct xdma_engine *engine, unsigned long arg)
 	struct gpudma_lock_t param;
 
 	printk("ioctl_gpudirect");
-	
+	/*
 	if(copy_from_user(&param, (void *)arg, sizeof(struct gpudma_lock_t))) {
 	  printk(KERN_ERR"%s(): Error in copy_from_user()\n", __FUNCTION__);
 	  error = -EFAULT;
 	  goto do_exit;
 	}
-	
+	*/
 	printk("this is xdma module");
-	say_hello();
+	nv_p2p_get(arg);
 	
 	return 0;
  do_exit:

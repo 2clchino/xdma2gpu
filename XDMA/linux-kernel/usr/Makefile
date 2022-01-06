@@ -10,11 +10,11 @@ CC = $(CROSS_COMPILE)gcc
 LD = $(CROSS_COMPILE)gcc
 
 #NVIDIA_DRIVER_PATH := $(HOME)/gpudma/nvidia
-NVIDIA_DRIVER_PATH := ../nvidia
+NVIDIA_DRIVER_PATH := ../NVIDIA-Linux-x86_64-470.74
 CUDADIR:=/opt/nvidia/hpc_sdk/Linux_x86_64/21.9/cuda/11.4/targets/x86_64-linux
 
 
-INCDIR := . $(CUDADIR)/include ../module $(NVIDIA_DRIVER_PATH)/kernel/nvidia
+INCDIR := . $(CUDADIR)/include ../gpuctl/src ../xdma $(NVIDIA_DRIVER_PATH)/kernel/nvidia
 INCLUDE := $(addprefix -I, $(INCDIR))
 CFLAGS := -D__LINUX__ -g -Wall $(INCLUDE)
 SRCFILE := $(wildcard *.cpp) 

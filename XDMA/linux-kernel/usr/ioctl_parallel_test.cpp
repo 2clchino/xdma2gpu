@@ -1,5 +1,6 @@
 #include "cuda.h"
-#include "../xdma/cdev_sgdma.h"
+#include "gpuctl.h"
+#include "cdev_sgdma.h"
 
 #include <dirent.h>
 #include <signal.h>
@@ -101,7 +102,12 @@ int main(){
   char name[256];
   checkError(cuDeviceGetName(name, 256, device));
   fprintf(stderr, "Select device: %s\n", name);
-
+  
+  // get compute capabilities and the devicename
+  int major = 0, minor = 0;
+  checkError( cuDeviceComputeCapability(&major, &minor, device));
+  fprintf(stderr, "Compute capability: %d.%d\n", major, minor);
+  
   size_t global_mem = 0;
   checkError( cuDeviceTotalMem(&global_mem, device));
   fprintf(stderr, "Global memory: %llu MB\n", (unsigned long long)(global_mem >> 20));

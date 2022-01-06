@@ -12,7 +12,7 @@ $(warning XVC_FLAGS: $(XVC_FLAGS).)
 topdir := $(shell cd $(src)/.. && pwd)
 
 TARGET_MODULE:=xdma
-EMPTY_DRIVER_PATH := $(topdir)/empty_module
+EMPTY_DRIVER_PATH := $(topdir)/gpuctl
 KBUILD_EXTRA_SYMBOLS := $(EMPTY_DRIVER_PATH)/Module.symvers
 
 EXTRA_CFLAGS := -I$(topdir)/include $(XVC_FLAGS)
