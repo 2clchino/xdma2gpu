@@ -148,6 +148,7 @@ int nvfs_nvidia_p2p_get_pages(uint64_t p2p_token, uint32_t va_space,
 	if(nvidia_p2p_get_pages_p) {
 		return nvidia_p2p_get_pages_p(p2p_token, va_space, virtual_address, length, page_table, free_callback, data);
 	} else {
+	  printk("fail to access nvidia_p2p_get_pages_p");
 		return -ENOMEM;
 	}
 }
