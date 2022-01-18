@@ -33,7 +33,7 @@ struct gpudma_state_t {
 //-----------------------------------------------------------------------------
 
 int say_hello(void);
-int nv_p2p_get(unsigned long arg);
+int nv_p2p_get(unsigned long arg, struct pci_dev *pdev);
 
 #define nvfs_msg(KRNLVL, FMT, ARGS...) printk(KRNLVL DEVICE_NAME ":" FMT, ## ARGS)
 #define nvfs_err(FMT, ARGS...)                               \

@@ -740,13 +740,13 @@ static int ioctl_do_align_get(struct xdma_engine *engine, unsigned long arg)
 	return put_user(engine->addr_align, (int __user *)arg);
 }
 
-static int ioctl_gpudirect(struct xdma_engine *engine, unsigned long arg)
+static int ioctl_gpudirect(struct xdma_cdev *xcdev, struct xdma_engine *engine, unsigned long arg)
 {
 	int error = 0;
 	size_t pin_size = 0ULL;
 	struct gpumem_t *entry = 0;
 	struct gpudma_lock_t param;
-
+	printk("xdma:%u", xcdev->xpdev->pdev->vendor);
 	printk("ioctl_gpudirect");
 	/*
 	if(copy_from_user(&param, (void *)arg, sizeof(struct gpudma_lock_t))) {
@@ -756,7 +756,7 @@ static int ioctl_gpudirect(struct xdma_engine *engine, unsigned long arg)
 	}
 	*/
 	printk("this is xdma module");
-	nv_p2p_get(arg);
+	nv_p2p_get(arg, xcdev->xpdev->pdev);
 	
 	return 0;
  do_exit:
@@ -878,7 +878,7 @@ static long char_sgdma_ioctl(struct file *file, unsigned int cmd,
 	  rv = ioctl_write(xdev, engine, arg);
 		break;
 	case IOCTL_XDMA_GPU:
-	  	rv = ioctl_gpudirect(engine, arg);
+	  rv = ioctl_gpudirect(xcdev, engine, arg);
 		break;
 	default:
 		dbg_perf("Unsupported operation\n");

@@ -43,12 +43,16 @@ static void free_nvp_callback(void *data)
   }
 }
 
-int nv_p2p_get(unsigned long arg){
+int nv_p2p_get(unsigned long arg, struct pci_dev *pdev){
     int error = 0;
+    int ret;
     size_t pin_size = 0ULL;
     struct gpumem_t *entry = 0;
     struct gpudma_lock_t param;
-
+    struct nvidia_p2p_dma_mapping *dma_mapping = NULL;
+    int ndmachunks = 1;
+    int i;
+    printk("gpuctl:%u", pdev->vendor);
     if(copy_from_user(&param, (void *)arg, sizeof(struct gpudma_lock_t))) {
         printk(KERN_ERR"%s(): Error in copy_from_user()\n", __FUNCTION__);
         error = -EFAULT;
@@ -79,12 +83,31 @@ int nv_p2p_get(unsigned long arg){
         error = -EINVAL;
         goto do_free_mem;
     }
-    printk("entries: %u\n", entry->page_table->entries);
-    printk("page_size: %u\n", entry->page_table->page_size);
-    printk("pages: %pr\n", entry->page_table->pages);
+    printk("entry->page_table->entries: %u\n", entry->page_table->entries);
+    printk("entry->page_table->page_size: %u\n", entry->page_table->page_size);
+    // printk("pages: %pr\n", entry->page_table->pages);
     param.page_count = entry->page_table->entries;
     param.handle = entry;
+    dma_mapping = kmalloc(sizeof(struct nvidia_p2p_dma_mapping), GFP_KERNEL);
+    if (!dma_mapping)
+      goto do_free_mem;
+    ret = nvfs_nvidia_p2p_dma_map_pages(pdev, entry->page_table, &dma_mapping);
+    if (ret) {
+      printk ("Unabled to obtain dma_mapping :%d for %p-%p\n",
+		ret, entry->page_table, pdev);
+      goto do_unlock_pages;
+    }
 
+    for (i = 0; i < dma_mapping->entries - 1; i++) {
+      printk("%d Physical 0x%016llx DMA 0x%016llx\n", i,
+	       dma_mapping->dma_addresses[i],
+	       entry->page_table->pages[i]->physical_address);
+      if(dma_mapping->dma_addresses[i] + GPU_BOUND_SIZE != 
+	 dma_mapping->dma_addresses[i + 1])
+	ndmachunks += 1;
+    }
+    
+    printk("dma_mapping->entries: %u", dma_mapping->entries);
     printk(KERN_ERR"%s(): param.handle: %p\n", __FUNCTION__, param.handle);
 
     if(copy_to_user((void *)arg, &param, sizeof(struct gpudma_lock_t))) {
