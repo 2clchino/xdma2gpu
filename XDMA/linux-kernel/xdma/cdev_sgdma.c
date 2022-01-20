@@ -35,8 +35,8 @@
 #include "xdma_cdev.h"
 #include "cdev_sgdma.h"
 #include "xdma_thread.h"
-// #include "src/gpuctl.h"
 #include "src/gpumemdrv.h"
+#include "src/gpuctl.h"
 
 /* Module Parameters */
 unsigned int h2c_timeout = 10;
@@ -372,6 +372,11 @@ static ssize_t char_sgdma_read_write(struct file *file, const char __user *buf,
 		file, file->private_data, buf, (u64)count, (u64)*pos, write,
 		engine->name);
 
+	if (write)
+	  printk("You write %d", engine->dir);
+	else
+	  printk("You read %d", engine->dir);
+	
 	if ((write && engine->dir != DMA_TO_DEVICE) ||
 	    (!write && engine->dir != DMA_FROM_DEVICE)) {
 		pr_err("r/w mismatch. W %d, dir %d.\n",
@@ -380,10 +385,7 @@ static ssize_t char_sgdma_read_write(struct file *file, const char __user *buf,
 	}
 	// printk("buf : %d", *buf);
 
-	if (write)
-	  printk("You write %zu", count);
-	else
-	  printk("You read %zu", count);
+
 
 	  
 	rv = check_transfer_align(engine, buf, count, *pos, 1);
@@ -741,24 +743,25 @@ static int ioctl_do_align_get(struct xdma_engine *engine, unsigned long arg)
 	return put_user(engine->addr_align, (int __user *)arg);
 }
 
-static int ioctl_gpudirect(struct xdma_cdev *xcdev, struct xdma_engine *engine, unsigned long arg)
+static int ioctl_gpudirect(struct xdma_cdev *xcdev, struct xdma_engine *engine, unsigned long arg, bool write)
 {
-	int error = 0;
-	size_t pin_size = 0ULL;
-	bool write = true;
-	struct gpumem_t *entry = 0;
-	struct gpudma_lock_t param;
 	struct xdma_io_cb cb;
 	struct sg_table *sgt = &cb.sgt;
-	unsigned long len = cb.len;
+	unsigned long len;
 	struct scatterlist *sg;
 	struct xdma_dev *xdev;
 	ssize_t res = 0;
 	loff_t pos = 0;
-	xdev = xcdev->xdev;
-	engine->dir = DMA_TO_DEVICE;
-	// struct nvidia_p2p_dma_mapping *dma_mapping = NULL;
 	int i, j, ret;
+	xdev = xcdev->xdev;
+	// struct nvidia_p2p_dma_mapping *dma_mapping = NULL;
+	
+	if ((write && engine->dir != DMA_TO_DEVICE) ||
+	    (!write && engine->dir != DMA_FROM_DEVICE)) {
+	  pr_err("r/w mismatch. W %d, dir %d.\n",
+		 write, engine->dir);
+	  return -EINVAL;
+	}
 	// printk("xdma:%u", xcdev->xpdev->pdev->vendor);
 	// printk("ioctl_gpudirect");
 	/*
@@ -772,13 +775,14 @@ static int ioctl_gpudirect(struct xdma_cdev *xcdev, struct xdma_engine *engine, 
 	memset(&cb, 0, sizeof(struct xdma_io_cb));
 	// dma_mapping = kmalloc(sizeof(struct nvidia_p2p_dma_mapping), GFP_KERNEL);
         cb.page_table = nv_p2p_get(arg, xcdev->xpdev->pdev, &cb.dma_mapping);
-	printk("dma_mapping: %u", cb.dma_mapping->entries);
-	printk("page_table: %u", cb.page_table->entries);
-	
+	//printk("dma_mapping: %u", cb.dma_mapping->entries);
+	//printk("page_table: %u", cb.page_table->entries);
+	/*
 	for (i = 0; i < cb.dma_mapping->entries - 1; i++) {
 	  printk("%d Physical 0x%016llx\n", i,
 		 cb.dma_mapping->dma_addresses[i]);
 	}
+	*/
 	ret = sg_alloc_table(sgt, cb.dma_mapping->entries, GFP_KERNEL);
 	if (ret) {
 	  // nvidia_p2p_dma_unmap_pages(pdev, page_table, dma_mapping);
@@ -786,20 +790,32 @@ static int ioctl_gpudirect(struct xdma_cdev *xcdev, struct xdma_engine *engine, 
 	}
         len = GPU_BOUND_SIZE;
 	cb.pages_nr = cb.dma_mapping->entries;
-	for_each_sg(sgt->sgl, sg, cb.pages_nr, j) {
+	// offset = cb.dma_mapping->dma_addresses[0] % GPU_BOUND_SIZE;
+	for_each_sg(sgt->sgl, sg, cb.pages_nr, i) {
 	  sg_set_page(sg, NULL, len, 0);
 	  sg->dma_address = cb.dma_mapping->dma_addresses[i];
 	  sg->dma_length = len;
 	}
+	if (write)
+	  printk("You write %d", engine->dir);
+	else
+	  printk("You read %d", engine->dir);
 	res = xdma_xfer_submit(xdev, engine->channel, write, pos, &cb.sgt,
-				0, h2c_timeout * 1000);
+			       0, write ? h2c_timeout * 1000 :
+			       c2h_timeout * 1000);
 	char_sgdma_unmap_user_buf(&cb, write);
 	return 0;
- do_exit:
-	printk("error!");
-	return error;
 }
 
+static int ioctl_gpudirect_write(struct xdma_cdev *xcdev, struct xdma_engine *engine, unsigned long arg)
+{
+        return ioctl_gpudirect(xcdev, engine, arg, 1);
+}
+
+static int ioctl_gpudirect_read(struct xdma_cdev *xcdev, struct xdma_engine *engine, unsigned long arg)
+{
+	return ioctl_gpudirect(xcdev, engine, arg, 0);
+}
 
 static int ioctl_write(struct xdma_dev *xdev, struct xdma_engine *engine, unsigned long arg){
 	int rv;
@@ -808,23 +824,23 @@ static int ioctl_write(struct xdma_dev *xdev, struct xdma_engine *engine, unsign
 	struct xdma_io_cb cb;
 	struct xdma_data_ioctl *tmp;
 	struct xdma_data_ioctl data;
-	char str[20];
+        char __user *buf;
 	loff_t pos = 0;
 	size_t count;
 	tmp = &data;
-	engine->dir = DMA_TO_DEVICE;
 	rv = copy_from_user(tmp,
 		(struct xdma_data_ioctl __user *)arg,
 		sizeof(struct xdma_data_ioctl));
-	rv = copy_from_user(str,
+	buf = kmalloc(tmp->count, GFP_KERNEL);
+	rv = copy_from_user(buf,
 			    (char __user *)tmp->value,
 			    tmp->count);
 	// tmp->value = &(str[0]);
 	xdev->read_write_data = *tmp;
-	printk("str: %s", str);
+	//printk("str: %s", str);
 	// printk("xdev: %s", xdev->read_write_data.value);
 	count = tmp->count;
-	rv = check_transfer_align(engine, str, count, pos, 1);
+	rv = check_transfer_align(engine, buf, count, pos, 1);
 	if (rv) {
 		pr_info("Invalid transfer alignment detected\n");
 		return rv;
@@ -844,7 +860,8 @@ static int ioctl_write(struct xdma_dev *xdev, struct xdma_engine *engine, unsign
 				0, h2c_timeout * 1000);
 
 	char_sgdma_unmap_user_buf(&cb, write);
-	printk("no error %s\n", str);
+	printk("write finish\n");
+	kfree(buf);
 	return res;
 }
 
@@ -882,12 +899,10 @@ static long char_sgdma_ioctl(struct file *file, unsigned int cmd,
 	rv = xcdev_check(__func__, xcdev, 1);
 	if (rv < 0)
 		return rv;
-
-	printk("aaa");
 	
 	xdev = xcdev->xdev;
 	engine = xcdev->engine;
-
+	
 	switch (cmd) {
 	case IOCTL_XDMA_PERF_START:
 		rv = ioctl_do_perf_start(engine, arg);
@@ -913,8 +928,11 @@ static long char_sgdma_ioctl(struct file *file, unsigned int cmd,
 	case IOCTL_XDMA_WRITE:
 	  rv = ioctl_write(xdev, engine, arg);
 		break;
-	case IOCTL_XDMA_GPU:
-	  rv = ioctl_gpudirect(xcdev, engine, arg);
+	case IOCTL_XDMA_GPU_WRITE:
+	  rv = ioctl_gpudirect_write(xcdev, engine, arg);
+		break;
+	case IOCTL_XDMA_GPU_READ:
+	  rv = ioctl_gpudirect_read(xcdev, engine, arg);
 		break;
 	default:
 		dbg_perf("Unsupported operation\n");

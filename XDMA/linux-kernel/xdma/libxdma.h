@@ -31,7 +31,7 @@
 #include <linux/kernel.h>
 #include <linux/pci.h>
 #include <linux/workqueue.h>
-#include "src/gpuctl.h"
+#include "src/gpumemdrv.h"
 /* Add compatibility checking for RHEL versions */
 #if defined(RHEL_RELEASE_CODE)
 #	define ACCESS_OK_2_ARGS (RHEL_RELEASE_CODE >= RHEL_RELEASE_VERSION(8, 0))

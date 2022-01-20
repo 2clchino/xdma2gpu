@@ -21,9 +21,9 @@
 
 
 // #define IOCTL_XDMA_WRITE          _IOR('q', 8, struct xdma_data_ioctl *)
-
+# define N 100
 typedef struct xdma_data_ioctl{
-  char *value;
+  float *value;
   size_t count;
 } dma_read;
 
@@ -35,14 +35,13 @@ typedef struct parallel_write_arg{
 
 typedef struct parallel_read_arg{
   int fd;
-  char *data;
-  size_t size;
+  unsigned int cmd;
+  gpudma_lock_t *data;
 } parallel_read;
 
 void* write_test(void* p){
   parallel_write* datas;
   datas = (parallel_write*)p;
-  printf("write: %s\n", datas->data->value);
   ioctl(datas->fd, datas->cmd, datas->data);
   return NULL;
 }
@@ -50,10 +49,17 @@ void* write_test(void* p){
 void* read_test(void* p){
   parallel_read* datas;
   datas = (parallel_read*)p;
-  printf("read: %s\n", datas->data);
-  read(datas->fd, datas->data, datas->size);
+  ioctl(datas->fd, datas->cmd, datas->data);
   return NULL;
 }
+/*
+void* read_test(void* p){
+  parallel_write* datas;
+  datas = (parallel_write*)p;
+  ioctl(datas->fd, datas->cmd, datas->data);
+  return NULL;
+}
+*/
 
 //-----------------------------------------------------------------------------
 
@@ -73,11 +79,12 @@ int main(){
   int res = -1;
   unsigned count=0x0A000000;
   
-  char hoge[20];
-  char *addr;
-  dma_read tmp = { addr, sizeof(hoge)};
-  //pthread_t thr1, thr2;
-  
+  // char hoge[20];
+  // char *addr;
+  dma_read tmp;//  = { addr, sizeof(hoge)};
+  pthread_t thr1, thr2;
+  parallel_write write_data;
+  parallel_read read_data;
   int fd_o = open("/dev/xdma0_h2c_0", O_WRONLY);
   if (fd_o < 0){
     printf("Can't open H2C.\n");
@@ -117,7 +124,14 @@ int main(){
   CUcontext  context;
   checkError(cuCtxCreate(&context, 0, device));
   
-  size_t size = 0x100000;
+  float *arr1, *arr2;
+  size_t n_byte = N * sizeof(float);
+  arr1 = (float *)malloc(n_byte);
+  arr2 = (float *)malloc(n_byte);
+  for (int i = 0; i < N; i++){
+    arr1[i] = (float)(i + 1);
+  }
+  size_t size = sizeof(arr1);
   CUdeviceptr dptr = 0;
   unsigned int flag = 1;
   unsigned char *h_odata = NULL;
@@ -142,22 +156,28 @@ int main(){
   // ------------------------------------------------------------
   // Send and receive data
   
-  strcpy(hoge, "Hello");
-  addr = &(hoge[0]);
-  ioctl(fd_i, IOCTL_XDMA_GPU, &lock);
-  printf("Hello\n");
-  /*
-  parallel_write write_data = { fd_o, IOCTL_XDMA_WRITE, &tmp};
-  parallel_read read_data = { fd_i, addr, sizeof(hoge)};
+  // strcpy(hoge, "Hello");
+  // addr = &(hoge[0]);
+  // ioctl(fd_o, IOCTL_XDMA_GPU_WRITE, &lock);
+  // ioctl(fd_i, IOCTL_XDMA_GPU_READ, &lock);
+  // printf("Hello\n");
+  printf("addr: %ld, size: %ld\n", lock.addr, lock.size);
+  tmp = { arr1, sizeof(arr1)};
+  write_data = { fd_o, IOCTL_XDMA_WRITE, &tmp};
+  read_data = { fd_i, IOCTL_XDMA_GPU_READ, &lock};
   pthread_create( &thr1, NULL, write_test, (void*)(&write_data));
   pthread_create( &thr2, NULL, read_test, (void*)(&read_data));
-  printf("main :%s\n", write_data.data->value);
   pthread_join(thr1, NULL);
   pthread_join(thr2, NULL);
   pthread_detach(thr1);
   pthread_detach(thr2);
-  */
 
+  sleep(5);
+  printf("addr: %ld, size: %ld\n", lock.addr, lock.size);
+  cuMemcpyDtoH(arr2, lock.addr, lock.size);
+  for (int i = 0; i < N; i++){
+    printf("%f -> %f\n",arr1[i], arr2[i]);
+  }
   
   // ------------------------------------------------------------
   // Clean up

@@ -50,9 +50,7 @@ struct nvidia_p2p_page_table* nv_p2p_get(unsigned long arg, struct pci_dev *pdev
     struct gpumem_t *entry = 0;
     struct gpudma_lock_t param;
     // struct nvidia_p2p_dma_mapping *dma_mapping = NULL;
-    int ndmachunks = 1;
-    int i;
-    printk("gpuctl:%u", pdev->vendor);
+    // printk("gpuctl:%u", pdev->vendor);
     if(copy_from_user(&param, (void *)arg, sizeof(struct gpudma_lock_t))) {
         printk(KERN_ERR"%s(): Error in copy_from_user()\n", __FUNCTION__);
         error = -EFAULT;

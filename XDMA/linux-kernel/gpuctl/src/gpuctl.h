@@ -1,7 +1,7 @@
 #ifndef GPUCTl_H
 #define GPUCTL_H
 
-#include "nv-p2p.h"
+//#include "nv-p2p.h"
 //-----------------------------------------------------------------------------
 // for boundary alignment requirement
 #define GPU_BOUND_SHIFT 16
