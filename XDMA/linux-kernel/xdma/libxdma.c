@@ -3356,7 +3356,7 @@ unmap_sgl:
 		pci_unmap_sg(xdev->pdev, sgt->sgl, sgt->orig_nents, dir);
 		sgt->nents = 0;
 	}
-	printk("submit0");
+	// printk("submit0");
 	if (req)
 		xdma_request_free(req);
 

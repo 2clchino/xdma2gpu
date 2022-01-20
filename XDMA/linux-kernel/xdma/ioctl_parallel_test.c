@@ -92,8 +92,8 @@ int main(){
   strcpy(hoge, "Hello");
   addr = &(hoge[0]);
   dma_read tmp = { addr, sizeof(hoge)};
-  parallel_write write_data = { fd_o, IOCTL_XDMA_WRITE, &tmp};
-  parallel_read read_data = { fd_i, addr, sizeof(hoge)};
+  parallel_write write_data = { fd_i, IOCTL_XDMA_WRITE, &tmp};
+  parallel_read read_data = { fd_o, addr, sizeof(hoge)};
   pthread_create( &thr1, NULL, write_test, (void*)(&write_data));
   pthread_create( &thr2, NULL, read_test, (void*)(&read_data));
   printf("main :%s\n", write_data.data->value);

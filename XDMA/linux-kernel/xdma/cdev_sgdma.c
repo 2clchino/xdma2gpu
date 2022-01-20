@@ -745,11 +745,20 @@ static int ioctl_gpudirect(struct xdma_cdev *xcdev, struct xdma_engine *engine, 
 {
 	int error = 0;
 	size_t pin_size = 0ULL;
+	bool write = true;
 	struct gpumem_t *entry = 0;
 	struct gpudma_lock_t param;
 	struct xdma_io_cb cb;
+	struct sg_table *sgt = &cb.sgt;
+	unsigned long len = cb.len;
+	struct scatterlist *sg;
+	struct xdma_dev *xdev;
+	ssize_t res = 0;
+	loff_t pos = 0;
+	xdev = xcdev->xdev;
+	engine->dir = DMA_TO_DEVICE;
 	// struct nvidia_p2p_dma_mapping *dma_mapping = NULL;
-	int i;
+	int i, j, ret;
 	// printk("xdma:%u", xcdev->xpdev->pdev->vendor);
 	// printk("ioctl_gpudirect");
 	/*
@@ -770,7 +779,21 @@ static int ioctl_gpudirect(struct xdma_cdev *xcdev, struct xdma_engine *engine, 
 	  printk("%d Physical 0x%016llx\n", i,
 		 cb.dma_mapping->dma_addresses[i]);
 	}
-	
+	ret = sg_alloc_table(sgt, cb.dma_mapping->entries, GFP_KERNEL);
+	if (ret) {
+	  // nvidia_p2p_dma_unmap_pages(pdev, page_table, dma_mapping);
+	  return ret;
+	}
+        len = GPU_BOUND_SIZE;
+	cb.pages_nr = cb.dma_mapping->entries;
+	for_each_sg(sgt->sgl, sg, cb.pages_nr, j) {
+	  sg_set_page(sg, NULL, len, 0);
+	  sg->dma_address = cb.dma_mapping->dma_addresses[i];
+	  sg->dma_length = len;
+	}
+	res = xdma_xfer_submit(xdev, engine->channel, write, pos, &cb.sgt,
+				0, h2c_timeout * 1000);
+	char_sgdma_unmap_user_buf(&cb, write);
 	return 0;
  do_exit:
 	printk("error!");
