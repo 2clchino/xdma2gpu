@@ -752,7 +752,8 @@ static int ioctl_gpudirect(struct xdma_cdev *xcdev, struct xdma_engine *engine, 
 	struct xdma_dev *xdev;
 	ssize_t res = 0;
 	loff_t pos = 0;
-	int i, j, ret;
+	int i = 0;
+	int ret;
 	xdev = xcdev->xdev;
 	// struct nvidia_p2p_dma_mapping *dma_mapping = NULL;
 	
@@ -792,7 +793,10 @@ static int ioctl_gpudirect(struct xdma_cdev *xcdev, struct xdma_engine *engine, 
 	cb.pages_nr = cb.dma_mapping->entries;
 	// offset = cb.dma_mapping->dma_addresses[0] % GPU_BOUND_SIZE;
 	for_each_sg(sgt->sgl, sg, cb.pages_nr, i) {
-	  sg_set_page(sg, NULL, len, 0);
+	  if (i == 0)
+      sg_set_page(sg, NULL, len - offset, offset);
+    else
+	    sg_set_page(sg, NULL, len, 0);
 	  sg->dma_address = cb.dma_mapping->dma_addresses[i];
 	  sg->dma_length = len;
 	}
