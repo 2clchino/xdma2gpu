@@ -31,7 +31,7 @@
 #include <linux/kernel.h>
 #include <linux/pci.h>
 #include <linux/workqueue.h>
-
+#include "src/gpuctl.h"
 /* Add compatibility checking for RHEL versions */
 #if defined(RHEL_RELEASE_CODE)
 #	define ACCESS_OK_2_ARGS (RHEL_RELEASE_CODE >= RHEL_RELEASE_VERSION(8, 0))
@@ -274,6 +274,9 @@ enum dev_capabilities {
 
 struct xdma_io_cb {
 	void __user *buf;
+  	struct nvidia_p2p_page_table *page_table;
+  // #if NV_DMA_MAPPING
+	struct nvidia_p2p_dma_mapping *dma_mapping;
 	size_t len;
 	void *private;
 	unsigned int pages_nr;

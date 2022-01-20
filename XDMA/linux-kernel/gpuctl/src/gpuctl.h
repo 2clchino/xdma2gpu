@@ -1,3 +1,7 @@
+#ifndef GPUCTl_H
+#define GPUCTL_H
+
+#include "nv-p2p.h"
 //-----------------------------------------------------------------------------
 // for boundary alignment requirement
 #define GPU_BOUND_SHIFT 16
@@ -33,8 +37,10 @@ struct gpudma_state_t {
 //-----------------------------------------------------------------------------
 
 int say_hello(void);
-int nv_p2p_get(unsigned long arg, struct pci_dev *pdev);
+struct nvidia_p2p_page_table* nv_p2p_get(unsigned long arg, struct pci_dev *pdev, struct nvidia_p2p_dma_mapping **dma_mapping);
 
 #define nvfs_msg(KRNLVL, FMT, ARGS...) printk(KRNLVL DEVICE_NAME ":" FMT, ## ARGS)
 #define nvfs_err(FMT, ARGS...)                               \
     nvfs_msg(KERN_ERR, FMT, ## ARGS)
+
+#endif

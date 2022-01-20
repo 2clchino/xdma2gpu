@@ -13,10 +13,12 @@ topdir := $(shell cd $(src)/.. && pwd)
 
 TARGET_MODULE:=xdma
 EMPTY_DRIVER_PATH := $(topdir)/gpuctl
+NVIDIA_DRIVER_PATH := $(topdir)/NVIDIA-Linux-x86_64-470.74
 KBUILD_EXTRA_SYMBOLS := $(EMPTY_DRIVER_PATH)/Module.symvers
 
 EXTRA_CFLAGS := -I$(topdir)/include $(XVC_FLAGS)
 EXTRA_CFLAGS += -I$(EMPTY_DRIVER_PATH)/
+EXTRA_CFLAGS += -I$(NVIDIA_DRIVER_PATH)/kernel/nvidia
 #EXTRA_CFLAGS += -D__LIBXDMA_DEBUG__
 #EXTRA_CFLAGS += -DINTERNAL_TESTING
 

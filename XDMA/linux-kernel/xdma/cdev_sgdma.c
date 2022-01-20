@@ -35,7 +35,8 @@
 #include "xdma_cdev.h"
 #include "cdev_sgdma.h"
 #include "xdma_thread.h"
-#include "src/gpuctl.h"
+// #include "src/gpuctl.h"
+#include "src/gpumemdrv.h"
 
 /* Module Parameters */
 unsigned int h2c_timeout = 10;
@@ -746,8 +747,11 @@ static int ioctl_gpudirect(struct xdma_cdev *xcdev, struct xdma_engine *engine, 
 	size_t pin_size = 0ULL;
 	struct gpumem_t *entry = 0;
 	struct gpudma_lock_t param;
-	printk("xdma:%u", xcdev->xpdev->pdev->vendor);
-	printk("ioctl_gpudirect");
+	struct xdma_io_cb cb;
+	// struct nvidia_p2p_dma_mapping *dma_mapping = NULL;
+	int i;
+	// printk("xdma:%u", xcdev->xpdev->pdev->vendor);
+	// printk("ioctl_gpudirect");
 	/*
 	if(copy_from_user(&param, (void *)arg, sizeof(struct gpudma_lock_t))) {
 	  printk(KERN_ERR"%s(): Error in copy_from_user()\n", __FUNCTION__);
@@ -755,8 +759,17 @@ static int ioctl_gpudirect(struct xdma_cdev *xcdev, struct xdma_engine *engine, 
 	  goto do_exit;
 	}
 	*/
-	printk("this is xdma module");
-	nv_p2p_get(arg, xcdev->xpdev->pdev);
+	// printk("this is xdma module");
+	memset(&cb, 0, sizeof(struct xdma_io_cb));
+	// dma_mapping = kmalloc(sizeof(struct nvidia_p2p_dma_mapping), GFP_KERNEL);
+        cb.page_table = nv_p2p_get(arg, xcdev->xpdev->pdev, &cb.dma_mapping);
+	printk("dma_mapping: %u", cb.dma_mapping->entries);
+	printk("page_table: %u", cb.page_table->entries);
+	
+	for (i = 0; i < cb.dma_mapping->entries - 1; i++) {
+	  printk("%d Physical 0x%016llx\n", i,
+		 cb.dma_mapping->dma_addresses[i]);
+	}
 	
 	return 0;
  do_exit:
