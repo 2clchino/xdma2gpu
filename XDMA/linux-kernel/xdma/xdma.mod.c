@@ -136,7 +136,7 @@ __used __section("__versions") = {
 	{ 0xd38ebd32, "pci_enable_device" },
 	{ 0x13c49cc2, "_copy_from_user" },
 	{ 0x262c1ff3, "param_ops_uint" },
-	{ 0x4953a8c5, "nv_p2p_get" },
+	{ 0x6f853b7b, "nv_p2p_get" },
 	{ 0x5b54da1d, "__class_create" },
 	{ 0x88db9f48, "__check_object_size" },
 	{ 0xe3ec2f2b, "alloc_chrdev_region" },
@@ -209,4 +209,4 @@ MODULE_ALIAS("pci:v000010EEd00002808sv*sd*bc*sc*i*");
 MODULE_ALIAS("pci:v00001D0Fd0000F000sv*sd*bc*sc*i*");
 MODULE_ALIAS("pci:v00001D0Fd0000F001sv*sd*bc*sc*i*");
 
-MODULE_INFO(srcversion, "92768AFAE2DA9975D39872A");
+MODULE_INFO(srcversion, "03A9F0F08BB8D8B00CE7897");

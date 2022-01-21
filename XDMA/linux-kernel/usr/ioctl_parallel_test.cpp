@@ -23,6 +23,7 @@
 // #define IOCTL_XDMA_WRITE          _IOR('q', 8, struct xdma_data_ioctl *)
 # define N 100
 typedef struct xdma_data_ioctl{
+  struct gpudma_lock_t *lock;
   int *value;
   size_t count;
 } dma_read;
@@ -36,7 +37,7 @@ typedef struct parallel_write_arg{
 typedef struct parallel_read_arg{
   int fd;
   unsigned int cmd;
-  gpudma_lock_t *data;
+  dma_read *data;
 } parallel_read;
 
 void* write_test(void* p){
@@ -131,13 +132,13 @@ int main(){
   for (int i = 0; i < N; i++){
     arr1[i] = (int)(i + 1);
   }
-  size_t size = sizeof(arr1);
+  size_t size = n_byte;
   CUdeviceptr dptr = 0;
   unsigned int flag = 1;
   unsigned char *h_odata = NULL;
   h_odata = (unsigned char *)malloc(size);
   
-  CUresult status = cuMemAlloc(&dptr, size);
+  CUresult status = cuMemAlloc(&dptr, n_byte);
   if(wasError(status)) {
     goto do_free_context;
   }
@@ -162,10 +163,12 @@ int main(){
   // ioctl(fd_i, IOCTL_XDMA_GPU_READ, &lock);
   // printf("Hello\n");
   // printf("addr: %ld, size: %ld\n", lock.addr, lock.size);
+  // tmp = { &lock, &arr1[0], (size_t)N };
+  // ioctl(fd_i, IOCTL_XDMA_WRITE, &tmp);
   
-  tmp = { &arr1[0], (size_t)N };
+  tmp = { &lock, &arr1[0], (size_t)N };// { &arr1[0], (size_t)N };
   write_data = { fd_o, IOCTL_XDMA_WRITE, &tmp};
-  read_data = { fd_i, IOCTL_XDMA_GPU_READ, &lock};
+  read_data = { fd_i, IOCTL_XDMA_GPU_READ, &tmp};
   pthread_create( &thr1, NULL, write_test, (void*)(&write_data));
   pthread_create( &thr2, NULL, read_test, (void*)(&read_data));
   pthread_join(thr1, NULL);

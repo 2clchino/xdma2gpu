@@ -43,19 +43,21 @@ static void free_nvp_callback(void *data)
   }
 }
 
-uint64_t nv_p2p_get(unsigned long arg, struct pci_dev *pdev, struct nvidia_p2p_dma_mapping **dma_mapping){
+uint64_t nv_p2p_get(struct gpudma_lock_t *param, struct pci_dev *pdev, struct nvidia_p2p_dma_mapping **dma_mapping){
     int error = 0;
-    int ret;
+    int ret, i;
     size_t pin_size = 0ULL;
     struct gpumem_t *entry = 0;
-    struct gpudma_lock_t param;
+    volatile unsigned long *ptr;
+    // struct gpudma_lock_t param;
     // struct nvidia_p2p_dma_mapping *dma_mapping = NULL;
     // printk("gpuctl:%u", pdev->vendor);
+    /*
     if(copy_from_user(&param, (void *)arg, sizeof(struct gpudma_lock_t))) {
         printk(KERN_ERR"%s(): Error in copy_from_user()\n", __FUNCTION__);
         error = -EFAULT;
         goto do_exit;
-    }
+	}*/
 
     entry = (struct gpumem_t*)kzalloc(sizeof(struct gpumem_t), GFP_KERNEL);
     if(!entry) {
@@ -67,9 +69,9 @@ uint64_t nv_p2p_get(unsigned long arg, struct pci_dev *pdev, struct nvidia_p2p_d
     INIT_LIST_HEAD(&entry->list);
     entry->handle = entry;
 
-    entry->virt_start = (param.addr & GPU_BOUND_MASK);
+    entry->virt_start = (param->addr & GPU_BOUND_MASK);
     printk("%lld", entry->virt_start);
-    pin_size = (param.addr + param.size - entry->virt_start);
+    pin_size = (param->addr + param->size - entry->virt_start);
     if(!pin_size) {
         printk(KERN_ERR"%s(): Error invalid memory size!\n", __FUNCTION__);
         error = -EINVAL;
@@ -85,17 +87,24 @@ uint64_t nv_p2p_get(unsigned long arg, struct pci_dev *pdev, struct nvidia_p2p_d
     // printk("entry->page_table->entries: %u\n", entry->page_table->entries);
     printk("entry->page_table->page_size: %u\n", entry->page_table->page_size);
     // printk("pages: %pr\n", entry->page_table->pages);
-    param.page_count = entry->page_table->entries;
-    param.handle = entry;
+    param->page_count = entry->page_table->entries;
+    param->handle = entry;
     // dma_mapping = kmalloc(sizeof(struct nvidia_p2p_dma_mapping), GFP_KERNEL);
     // if (!dma_mapping)
     //   goto do_free_mem;
+    printk("0x%llx", entry->page_table->pages[0]->physical_address);
+    //ptr = ioremap(entry->page_table->pages[0]->physical_address, sizeof(int)*1);
+      //printk("%p", ioremap(entry->page_table->pages[0]->physical_address, 256));
+    // printk("%ln", ptr);
+    // *ptr = 50;
+    
     ret = nvfs_nvidia_p2p_dma_map_pages(pdev, entry->page_table, dma_mapping);
     if (ret) {
       printk ("Unabled to obtain dma_mapping :%d for %p-%p\n",
 		ret, entry->page_table, pdev);
       goto do_unlock_pages;
     }
+    
     /*
     for (i = 0; i < dma_mapping->entries - 1; i++) {
       printk("%d Physical 0x%016llx DMA 0x%016llx\n", i,
@@ -107,19 +116,19 @@ uint64_t nv_p2p_get(unsigned long arg, struct pci_dev *pdev, struct nvidia_p2p_d
     }
     */
     //printk("dma_mapping->entries: %u", dma_mapping->entries);
-    printk(KERN_ERR"%s(): param.handle: %p\n", __FUNCTION__, param.handle);
-
+    printk(KERN_ERR"%s(): param->handle: %p\n", __FUNCTION__, param->handle);
+    /*
     if(copy_to_user((void *)arg, &param, sizeof(struct gpudma_lock_t))) {
         printk(KERN_ERR"%s(): Error in copy_from_user()\n", __FUNCTION__);
         error = -EFAULT;
         goto do_unlock_pages;
     }
-
+    */
     // list_add_tail(&entry->list, &drv->table_list);
 
     printk(KERN_ERR"%s(): Add new entry. handle: %p\n", __FUNCTION__, entry->handle);
 
-    return param.addr;
+    return param->addr;
 
 do_unlock_pages:
     nvfs_nvidia_p2p_put_pages(0, 0, entry->virt_start, entry->page_table);

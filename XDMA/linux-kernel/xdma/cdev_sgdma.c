@@ -750,14 +750,26 @@ static int ioctl_gpudirect(struct xdma_cdev *xcdev, struct xdma_engine *engine, 
 	unsigned long len;
 	struct scatterlist *sg;
 	struct xdma_dev *xdev;
-	ssize_t res = 0;
+	struct gpudma_lock_t param;
+	struct xdma_data_ioctl *tmp;
+	struct xdma_data_ioctl data;
+	ssize_t res, n_byte = 0;
 	loff_t pos = 0;
 	int i = 0;
-	int ret, offset;
+	int ret, offset, rv;
 	uint64_t addr;
 	xdev = xcdev->xdev;
+	tmp = &data;
 	// struct nvidia_p2p_dma_mapping *dma_mapping = NULL;
-	
+	rv = copy_from_user(tmp,
+			    (struct xdma_data_ioctl __user *)arg,
+			    sizeof(struct xdma_data_ioctl));
+	if(copy_from_user(&param, (void *)tmp->lock, sizeof(struct gpudma_lock_t))) {
+	  printk(KERN_ERR"%s(): Error in copy_from_user()\n", __FUNCTION__);
+	  // error = -EFAULT;
+	  // goto do_exit;
+	}
+	n_byte = sizeof(int) * tmp->count;
 	if ((write && engine->dir != DMA_TO_DEVICE) ||
 	    (!write && engine->dir != DMA_FROM_DEVICE)) {
 	  pr_err("r/w mismatch. W %d, dir %d.\n",
@@ -776,7 +788,7 @@ static int ioctl_gpudirect(struct xdma_cdev *xcdev, struct xdma_engine *engine, 
 	// printk("this is xdma module");
 	memset(&cb, 0, sizeof(struct xdma_io_cb));
 	// dma_mapping = kmalloc(sizeof(struct nvidia_p2p_dma_mapping), GFP_KERNEL);
-        addr = nv_p2p_get(arg, xcdev->xpdev->pdev, &cb.dma_mapping);
+        addr = nv_p2p_get(&param, xcdev->xpdev->pdev, &cb.dma_mapping);
 	//printk("dma_mapping: %u", cb.dma_mapping->entries);
 	//printk("page_table: %u", cb.page_table->entries);
 	/*
@@ -808,7 +820,7 @@ static int ioctl_gpudirect(struct xdma_cdev *xcdev, struct xdma_engine *engine, 
 	else
 	  printk("You read %d", engine->dir);
 	res = xdma_xfer_submit(xdev, engine->channel, write, pos, &cb.sgt,
-			       0, write ? h2c_timeout * 1000 :
+			       1, write ? h2c_timeout * 1000 :
 			       c2h_timeout * 1000);
 	char_sgdma_unmap_user_buf(&cb, write);
 	return 0;
@@ -824,23 +836,31 @@ static int ioctl_gpudirect_read(struct xdma_cdev *xcdev, struct xdma_engine *eng
 	return ioctl_gpudirect(xcdev, engine, arg, 0);
 }
 
-static int ioctl_write(struct xdma_dev *xdev, struct xdma_engine *engine, unsigned long arg){
+static int ioctl_write(struct xdma_cdev *xcdev, struct xdma_engine *engine, unsigned long arg){
 	int rv;
 	bool write = true;
 	ssize_t res = 0;
 	struct xdma_io_cb cb;
 	struct xdma_data_ioctl *tmp;
 	struct xdma_data_ioctl data;
+        struct gpudma_lock_t param;
         int *buf;
 	loff_t pos = 0;
 	size_t count;
 	int i = 0;
-	// uint64_t addr;
+	//uint64_t addr;
 	size_t n_byte;
+	struct xdma_dev *xdev;
+	xdev = xcdev->xdev;
 	tmp = &data;
 	rv = copy_from_user(tmp,
 		(struct xdma_data_ioctl __user *)arg,
 		sizeof(struct xdma_data_ioctl));
+	if(copy_from_user(&param, (void *)tmp->lock, sizeof(struct gpudma_lock_t))) {
+	  printk(KERN_ERR"%s(): Error in copy_from_user()\n", __FUNCTION__);
+	  // error = -EFAULT;
+	  // goto do_exit;
+	}
 	n_byte = sizeof(int) * tmp->count;
 	buf = kmalloc(n_byte, GFP_KERNEL);
 	rv = copy_from_user(buf,
@@ -848,9 +868,9 @@ static int ioctl_write(struct xdma_dev *xdev, struct xdma_engine *engine, unsign
 			    n_byte);
 	// tmp->value = &(str[0]);
 	xdev->read_write_data = *tmp;
-	/*for (i = 0; i < tmp->count; i++){
+	for (i = 0; i < tmp->count; i++){
 	  printk("str: %d: %d", i+1, buf[i]);
-	  }*/
+	}
 	
 	// printk("xdev: %s", xdev->read_write_data.value);
 	count = tmp->count;
@@ -859,16 +879,17 @@ static int ioctl_write(struct xdma_dev *xdev, struct xdma_engine *engine, unsign
 		pr_info("Invalid transfer alignment detected\n");
 		return rv;
 	}
-	/*
+	
 	memset(&cb, 0, sizeof(struct xdma_io_cb));
-	addr = nv_p2p_get(arg, xcdev->xpdev->pdev, &cb.dma_mapping);
-	for (i = 0; i < tmp->count; i++){
-	  addr[i] = buf[i];
+	//addr = nv_p2p_get(&param, xcdev->xpdev->pdev, &cb.dma_mapping);
+	/*for (i = 0; i < tmp->count; i++){
+	  //addr[i] = buf[i];
 	}
 	*/
 	
+	
 	cb.buf = (char __user *)tmp->value;
-	cb.len = count;
+	cb.len = n_byte;
 	cb.ep_addr = (u64)pos;
 	cb.write = write;
 	rv = char_sgdma_map_user_buf_to_sgl(&cb, write);
@@ -880,7 +901,13 @@ static int ioctl_write(struct xdma_dev *xdev, struct xdma_engine *engine, unsign
 				0, h2c_timeout * 1000);
 
 	char_sgdma_unmap_user_buf(&cb, write);
+	
 	printk("write finish\n");
+	/*if(copy_to_user((void *)arg, &param, sizeof(struct gpudma_lock_t))) {
+	  printk(KERN_ERR"%s(): Error in copy_from_user()\n", __FUNCTION__);
+	  // error = -EFAULT;
+	  // goto do_unlock_pages;
+	  }*/
 	kfree(buf);
 	return res;
 }
@@ -946,7 +973,7 @@ static long char_sgdma_ioctl(struct file *file, unsigned int cmd,
 	  	rv = ioctl_try(engine, arg);
 		break;
 	case IOCTL_XDMA_WRITE:
-	  rv = ioctl_write(xdev, engine, arg);
+	  rv = ioctl_write(xcdev, engine, arg);
 		break;
 	case IOCTL_XDMA_GPU_WRITE:
 	  rv = ioctl_gpudirect_write(xcdev, engine, arg);
