@@ -43,7 +43,7 @@ static void free_nvp_callback(void *data)
   }
 }
 
-struct nvidia_p2p_page_table* nv_p2p_get(unsigned long arg, struct pci_dev *pdev, struct nvidia_p2p_dma_mapping **dma_mapping){
+uint64_t nv_p2p_get(unsigned long arg, struct pci_dev *pdev, struct nvidia_p2p_dma_mapping **dma_mapping){
     int error = 0;
     int ret;
     size_t pin_size = 0ULL;
@@ -68,6 +68,7 @@ struct nvidia_p2p_page_table* nv_p2p_get(unsigned long arg, struct pci_dev *pdev
     entry->handle = entry;
 
     entry->virt_start = (param.addr & GPU_BOUND_MASK);
+    printk("%lld", entry->virt_start);
     pin_size = (param.addr + param.size - entry->virt_start);
     if(!pin_size) {
         printk(KERN_ERR"%s(): Error invalid memory size!\n", __FUNCTION__);
@@ -118,14 +119,14 @@ struct nvidia_p2p_page_table* nv_p2p_get(unsigned long arg, struct pci_dev *pdev
 
     printk(KERN_ERR"%s(): Add new entry. handle: %p\n", __FUNCTION__, entry->handle);
 
-    return entry->page_table;
+    return param.addr;
 
 do_unlock_pages:
     nvfs_nvidia_p2p_put_pages(0, 0, entry->virt_start, entry->page_table);
 do_free_mem:
     kfree(entry);
 do_exit:
-    return NULL;
+    return 0;
 }
 EXPORT_SYMBOL(nv_p2p_get);
 

@@ -753,7 +753,8 @@ static int ioctl_gpudirect(struct xdma_cdev *xcdev, struct xdma_engine *engine, 
 	ssize_t res = 0;
 	loff_t pos = 0;
 	int i = 0;
-	int ret;
+	int ret, offset;
+	uint64_t addr;
 	xdev = xcdev->xdev;
 	// struct nvidia_p2p_dma_mapping *dma_mapping = NULL;
 	
@@ -775,7 +776,7 @@ static int ioctl_gpudirect(struct xdma_cdev *xcdev, struct xdma_engine *engine, 
 	// printk("this is xdma module");
 	memset(&cb, 0, sizeof(struct xdma_io_cb));
 	// dma_mapping = kmalloc(sizeof(struct nvidia_p2p_dma_mapping), GFP_KERNEL);
-        cb.page_table = nv_p2p_get(arg, xcdev->xpdev->pdev, &cb.dma_mapping);
+        addr = nv_p2p_get(arg, xcdev->xpdev->pdev, &cb.dma_mapping);
 	//printk("dma_mapping: %u", cb.dma_mapping->entries);
 	//printk("page_table: %u", cb.page_table->entries);
 	/*
@@ -784,6 +785,7 @@ static int ioctl_gpudirect(struct xdma_cdev *xcdev, struct xdma_engine *engine, 
 		 cb.dma_mapping->dma_addresses[i]);
 	}
 	*/
+	printk("User Space Address :0x%llx",(unsigned long long)addr);
 	ret = sg_alloc_table(sgt, cb.dma_mapping->entries, GFP_KERNEL);
 	if (ret) {
 	  // nvidia_p2p_dma_unmap_pages(pdev, page_table, dma_mapping);
@@ -791,11 +793,12 @@ static int ioctl_gpudirect(struct xdma_cdev *xcdev, struct xdma_engine *engine, 
 	}
         len = GPU_BOUND_SIZE;
 	cb.pages_nr = cb.dma_mapping->entries;
-	// offset = cb.dma_mapping->dma_addresses[0] % GPU_BOUND_SIZE;
+	offset = addr % len;
+	printk("addr %lld, offset %d, len - offset %ld", addr, offset, len - offset);
 	for_each_sg(sgt->sgl, sg, cb.pages_nr, i) {
 	  if (i == 0)
-      sg_set_page(sg, NULL, len - offset, offset);
-    else
+	    sg_set_page(sg, NULL, len - offset, offset);
+	  else
 	    sg_set_page(sg, NULL, len, 0);
 	  sg->dma_address = cb.dma_mapping->dma_addresses[i];
 	  sg->dma_length = len;
@@ -828,29 +831,42 @@ static int ioctl_write(struct xdma_dev *xdev, struct xdma_engine *engine, unsign
 	struct xdma_io_cb cb;
 	struct xdma_data_ioctl *tmp;
 	struct xdma_data_ioctl data;
-        char __user *buf;
+        int *buf;
 	loff_t pos = 0;
 	size_t count;
+	int i = 0;
+	// uint64_t addr;
+	size_t n_byte;
 	tmp = &data;
 	rv = copy_from_user(tmp,
 		(struct xdma_data_ioctl __user *)arg,
 		sizeof(struct xdma_data_ioctl));
-	buf = kmalloc(tmp->count, GFP_KERNEL);
+	n_byte = sizeof(int) * tmp->count;
+	buf = kmalloc(n_byte, GFP_KERNEL);
 	rv = copy_from_user(buf,
 			    (char __user *)tmp->value,
-			    tmp->count);
+			    n_byte);
 	// tmp->value = &(str[0]);
 	xdev->read_write_data = *tmp;
-	//printk("str: %s", str);
+	/*for (i = 0; i < tmp->count; i++){
+	  printk("str: %d: %d", i+1, buf[i]);
+	  }*/
+	
 	// printk("xdev: %s", xdev->read_write_data.value);
 	count = tmp->count;
-	rv = check_transfer_align(engine, buf, count, pos, 1);
+	rv = check_transfer_align(engine, (char __user *)buf, count, pos, 1);
 	if (rv) {
 		pr_info("Invalid transfer alignment detected\n");
 		return rv;
 	}
-
+	/*
 	memset(&cb, 0, sizeof(struct xdma_io_cb));
+	addr = nv_p2p_get(arg, xcdev->xpdev->pdev, &cb.dma_mapping);
+	for (i = 0; i < tmp->count; i++){
+	  addr[i] = buf[i];
+	}
+	*/
+	
 	cb.buf = (char __user *)tmp->value;
 	cb.len = count;
 	cb.ep_addr = (u64)pos;

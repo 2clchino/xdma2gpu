@@ -23,7 +23,7 @@
 // #define IOCTL_XDMA_WRITE          _IOR('q', 8, struct xdma_data_ioctl *)
 # define N 100
 typedef struct xdma_data_ioctl{
-  float *value;
+  int *value;
   size_t count;
 } dma_read;
 
@@ -124,12 +124,12 @@ int main(){
   CUcontext  context;
   checkError(cuCtxCreate(&context, 0, device));
   
-  float *arr1, *arr2;
-  size_t n_byte = N * sizeof(float);
-  arr1 = (float *)malloc(n_byte);
-  arr2 = (float *)malloc(n_byte);
+  int *arr1, *arr2;
+  size_t n_byte = N * sizeof(int);
+  arr1 = (int *)malloc(n_byte);
+  arr2 = (int *)malloc(n_byte);
   for (int i = 0; i < N; i++){
-    arr1[i] = (float)(i + 1);
+    arr1[i] = (int)(i + 1);
   }
   size_t size = sizeof(arr1);
   CUdeviceptr dptr = 0;
@@ -158,11 +158,12 @@ int main(){
   
   // strcpy(hoge, "Hello");
   // addr = &(hoge[0]);
-  // ioctl(fd_o, IOCTL_XDMA_GPU_WRITE, &lock);
+  // (fd_o, IOCTL_XDMA_WRITE, &tmp);
   // ioctl(fd_i, IOCTL_XDMA_GPU_READ, &lock);
   // printf("Hello\n");
-  printf("addr: %ld, size: %ld\n", lock.addr, lock.size);
-  tmp = { arr1, sizeof(arr1)};
+  // printf("addr: %ld, size: %ld\n", lock.addr, lock.size);
+  
+  tmp = { &arr1[0], (size_t)N };
   write_data = { fd_o, IOCTL_XDMA_WRITE, &tmp};
   read_data = { fd_i, IOCTL_XDMA_GPU_READ, &lock};
   pthread_create( &thr1, NULL, write_test, (void*)(&write_data));
@@ -171,12 +172,11 @@ int main(){
   pthread_join(thr2, NULL);
   pthread_detach(thr1);
   pthread_detach(thr2);
-
-  sleep(5);
-  printf("addr: %ld, size: %ld\n", lock.addr, lock.size);
-  cuMemcpyDtoH(arr2, lock.addr, lock.size);
+  
+  printf("addr: 0x%llx, size: %ld\n", (unsigned long long)lock.addr, lock.size);
+  cuMemcpyDtoH(&arr2[0], (unsigned long long)dptr, lock.size);
   for (int i = 0; i < N; i++){
-    printf("%f -> %f\n",arr1[i], arr2[i]);
+    printf("%d -> %d\n",arr1[i], arr2[i]);
   }
   
   // ------------------------------------------------------------
