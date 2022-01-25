@@ -23,7 +23,6 @@
 // #define IOCTL_XDMA_WRITE          _IOR('q', 8, struct xdma_data_ioctl *)
 # define N 100
 typedef struct xdma_data_ioctl{
-  struct gpudma_lock_t *lock;
   int *value;
   size_t count;
 } dma_read;
@@ -31,13 +30,13 @@ typedef struct xdma_data_ioctl{
 typedef struct parallel_write_arg{
   int fd;
   unsigned int cmd;
-  dma_read *data;
+  gpudma_lock_t *data;
 } parallel_write;
 
 typedef struct parallel_read_arg{
   int fd;
-  unsigned int cmd;
-  dma_read *data;
+  int *value;
+  size_t size;
 } parallel_read;
 
 void* write_test(void* p){
@@ -50,17 +49,9 @@ void* write_test(void* p){
 void* read_test(void* p){
   parallel_read* datas;
   datas = (parallel_read*)p;
-  ioctl(datas->fd, datas->cmd, datas->data);
+  read(datas->fd, datas->value, datas->size);
   return NULL;
 }
-/*
-void* read_test(void* p){
-  parallel_write* datas;
-  datas = (parallel_write*)p;
-  ioctl(datas->fd, datas->cmd, datas->data);
-  return NULL;
-}
-*/
 
 //-----------------------------------------------------------------------------
 
@@ -74,15 +65,15 @@ int main(){
   // Open XDMA channels
 
   gpudma_lock_t lock;
-  gpudma_unlock_t unlock;
+  /* gpudma_unlock_t unlock;
   gpudma_state_t *state = 0;
   int statesize = 0;
   int res = -1;
   unsigned count=0x0A000000;
-  
+  */
   // char hoge[20];
   // char *addr;
-  dma_read tmp;//  = { addr, sizeof(hoge)};
+  // dma_read tmp;//  = { addr, sizeof(hoge)};
   pthread_t thr1, thr2;
   parallel_write write_data;
   parallel_read read_data;
@@ -112,10 +103,10 @@ int main(){
   fprintf(stderr, "Select device: %s\n", name);
   
   // get compute capabilities and the devicename
-  int major = 0, minor = 0;
+  /*int major = 0, minor = 0;
   checkError( cuDeviceComputeCapability(&major, &minor, device));
   fprintf(stderr, "Compute capability: %d.%d\n", major, minor);
-  
+  */
   size_t global_mem = 0;
   checkError( cuDeviceTotalMem(&global_mem, device));
   fprintf(stderr, "Global memory: %llu MB\n", (unsigned long long)(global_mem >> 20));
@@ -132,11 +123,10 @@ int main(){
   for (int i = 0; i < N; i++){
     arr1[i] = (int)(i + 1);
   }
-  size_t size = n_byte;
   CUdeviceptr dptr = 0;
   unsigned int flag = 1;
-  unsigned char *h_odata = NULL;
-  h_odata = (unsigned char *)malloc(size);
+  // unsigned char *h_odata = NULL;
+  // h_odata = (unsigned char *)malloc(size);
   
   CUresult status = cuMemAlloc(&dptr, n_byte);
   if(wasError(status)) {
@@ -144,16 +134,20 @@ int main(){
   }
   
   fprintf(stderr, "Allocate memory address: 0x%llx\n",  (unsigned long long)dptr);
-  
+  cuMemcpyHtoD((unsigned long long)dptr, &arr1[0], n_byte);
   status = cuPointerSetAttribute(&flag, CU_POINTER_ATTRIBUTE_SYNC_MEMOPS, dptr);
   if(wasError(status)) {
     goto do_free_memory;
   }
   
   fprintf(stderr, "Press enter to lock\n");
-
+  
+  /*cuMemcpyDtoH(&arr2[0], (unsigned long long)dptr, n_byte);
+  for (int i = 0; i < N; i++){
+    printf("%d -> %d\n",arr1[i], arr2[i]);
+    }*/
   lock.addr = dptr;
-  lock.size = size;
+  lock.size = n_byte;
   // ------------------------------------------------------------
   // Send and receive data
   
@@ -166,18 +160,21 @@ int main(){
   // tmp = { &lock, &arr1[0], (size_t)N };
   // ioctl(fd_i, IOCTL_XDMA_WRITE, &tmp);
   
-  tmp = { &lock, &arr1[0], (size_t)N };// { &arr1[0], (size_t)N };
-  write_data = { fd_o, IOCTL_XDMA_WRITE, &tmp};
-  read_data = { fd_i, IOCTL_XDMA_GPU_READ, &tmp};
+  // tmp = { &arr1[0], n_byte };// { &arr1[0], (size_t)N };
+  write_data = { fd_o, IOCTL_XDMA_GPU_WRITE, &lock};
+  read_data = { fd_i, &arr2[0], n_byte};
+  /*
   pthread_create( &thr1, NULL, write_test, (void*)(&write_data));
   pthread_create( &thr2, NULL, read_test, (void*)(&read_data));
   pthread_join(thr1, NULL);
   pthread_join(thr2, NULL);
   pthread_detach(thr1);
   pthread_detach(thr2);
-  
+  */
+  ioctl(fd_o, IOCTL_XDMA_GPU_WRITE, &lock);
+  read(fd_i, &arr2[0], n_byte);
   printf("addr: 0x%llx, size: %ld\n", (unsigned long long)lock.addr, lock.size);
-  cuMemcpyDtoH(&arr2[0], (unsigned long long)dptr, lock.size);
+  // cuMemcpyDtoH(&arr2[0], (unsigned long long)dptr, lock.size);
   for (int i = 0; i < N; i++){
     printf("%d -> %d\n",arr1[i], arr2[i]);
   }
@@ -194,10 +191,10 @@ int main(){
     goto do_free_state;
   }
   */
- do_free_state:
-  free(state);
- do_free_attr:
-  flag = 0;
+  // do_free_state:
+  // free(state);
+  // do_free_attr:
+  // flag = 0;
   cuPointerSetAttribute(&flag, CU_POINTER_ATTRIBUTE_SYNC_MEMOPS, dptr);
   
  do_free_memory:

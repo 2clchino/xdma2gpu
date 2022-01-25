@@ -569,7 +569,6 @@ struct xdma_user_irq {
 
 // 送受信データ構造(ドライバ記憶用)
 struct xdma_data_ioctl{
-  struct gpudma_lock_t *lock;
   int *value;
   size_t count;
 };

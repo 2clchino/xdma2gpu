@@ -1,4 +1,5 @@
-ioctl_parallel_test.o: ioctl_parallel_test.cpp /usr/include/stdc-predef.h \
+ioctl_parallel_test_gtof.o: src/ioctl_parallel_test_gtof.cpp \
+ /usr/include/stdc-predef.h \
  /opt/nvidia/hpc_sdk/Linux_x86_64/21.9/cuda/11.4/targets/x86_64-linux/include/cuda.h \
  /usr/include/c++/9/stdlib.h /usr/include/c++/9/cstdlib \
  /usr/include/x86_64-linux-gnu/c++/9/bits/c++config.h \

@@ -1,3 +1,4 @@
+ 
 PHONY = clean all
 TARGET_NAME = gpu_direct
 
@@ -31,10 +32,10 @@ $(TARGET_NAME): $(OBJFILE)
 
 %.o: %.cpp
 	$(CC) $(CFLAGS) -c -MD $<
-
+	
 include $(wildcard *.d)
 
-ftog:	$(patsubst %.cpp,%.o, ./src/ioctl_parallel_test_ftog.cpp)
+ftog:	$(patsubst %.cpp,%.o, ./src/ioctl_parallel_test.cpp)
 	$(LD) $(notdir $^) -o ftog $(LDFLAGS)
 	cp ftog ../bin
 
@@ -46,9 +47,7 @@ clean:
 	rm -f *.o *~ core
 	rm -f *.d *~ core
 	rm -f $(TARGET_NAME)
-	rm -f gtof
-	rm -f ftog
-
+	
 distclean:
 	rm -f *.o *~ core
 	rm -f *.d *~ core

@@ -48,7 +48,7 @@ uint64_t nv_p2p_get(struct gpudma_lock_t *param, struct pci_dev *pdev, struct nv
     int ret, i;
     size_t pin_size = 0ULL;
     struct gpumem_t *entry = 0;
-    volatile unsigned long *ptr;
+    volatile int *ptr;
     // struct gpudma_lock_t param;
     // struct nvidia_p2p_dma_mapping *dma_mapping = NULL;
     // printk("gpuctl:%u", pdev->vendor);
@@ -92,10 +92,10 @@ uint64_t nv_p2p_get(struct gpudma_lock_t *param, struct pci_dev *pdev, struct nv
     // dma_mapping = kmalloc(sizeof(struct nvidia_p2p_dma_mapping), GFP_KERNEL);
     // if (!dma_mapping)
     //   goto do_free_mem;
-    printk("0x%llx", entry->page_table->pages[0]->physical_address);
-    //ptr = ioremap(entry->page_table->pages[0]->physical_address, sizeof(int)*1);
-      //printk("%p", ioremap(entry->page_table->pages[0]->physical_address, 256));
-    // printk("%ln", ptr);
+    // printk("0x%llx", entry->page_table->pages[0]->physical_address);
+    ptr = ioremap(entry->page_table->pages[0]->physical_address, sizeof(int)*3);
+    printk("ptr : %p", ptr);
+    printk("ptr value : %d", *ptr);
     // *ptr = 50;
     
     ret = nvfs_nvidia_p2p_dma_map_pages(pdev, entry->page_table, dma_mapping);

@@ -1,10 +1,12 @@
 #include <linux/module.h>
 #define INCLUDE_VERMAGIC
 #include <linux/build-salt.h>
+#include <linux/elfnote-lto.h>
 #include <linux/vermagic.h>
 #include <linux/compiler.h>
 
 BUILD_SALT;
+BUILD_LTO_INFO;
 
 MODULE_INFO(vermagic, VERMAGIC_STRING);
 MODULE_INFO(name, KBUILD_MODNAME);
@@ -25,21 +27,21 @@ MODULE_INFO(retpoline, "Y");
 
 static const struct modversion_info ____versions[]
 __used __section("__versions") = {
-	{ 0x972f93ab, "module_layout" },
-	{ 0xbdbfaccb, "kmalloc_caches" },
+	{ 0xe9a850a9, "module_layout" },
+	{ 0xbd0c4c0c, "kmalloc_caches" },
 	{ 0x409bcb62, "mutex_unlock" },
 	{ 0xc5850110, "printk" },
+	{ 0xde80cd09, "ioremap" },
 	{ 0x2ab7989d, "mutex_lock" },
 	{ 0x868784cb, "__symbol_get" },
 	{ 0x2ea2c95c, "__x86_indirect_thunk_rax" },
 	{ 0xbdfb6dbb, "__fentry__" },
-	{ 0xdc80a8de, "kmem_cache_alloc_trace" },
+	{ 0xdbee476f, "kmem_cache_alloc_trace" },
 	{ 0x37a0cba, "kfree" },
-	{ 0xa9bc8b74, "module_mutex" },
 	{ 0x6e9dd606, "__symbol_put" },
 };
 
 MODULE_INFO(depends, "");
 
 
-MODULE_INFO(srcversion, "A0FA10E59914D846957CA47");
+MODULE_INFO(srcversion, "63F62E1C3DE63FEE0D7F626");

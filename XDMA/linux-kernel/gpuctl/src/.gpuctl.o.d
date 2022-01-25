@@ -1,10 +1,10 @@
 gpuctl.o: \
  /home/lab/shun/dma_ip_drivers/XDMA/linux-kernel/gpuctl/./src/gpuctl.c \
- include/linux/kconfig.h include/generated/autoconf.h \
- include/linux/compiler_types.h include/linux/compiler_attributes.h \
- include/linux/compiler-gcc.h include/linux/module.h include/linux/list.h \
- include/linux/types.h include/uapi/linux/types.h \
- arch/x86/include/generated/uapi/asm/types.h \
+ include/linux/compiler-version.h include/linux/kconfig.h \
+ include/generated/autoconf.h include/linux/compiler_types.h \
+ include/linux/compiler_attributes.h include/linux/compiler-gcc.h \
+ include/linux/module.h include/linux/list.h include/linux/types.h \
+ include/uapi/linux/types.h arch/x86/include/generated/uapi/asm/types.h \
  include/uapi/asm-generic/types.h include/asm-generic/int-ll64.h \
  include/uapi/asm-generic/int-ll64.h \
  arch/x86/include/uapi/asm/bitsperlong.h \
@@ -15,7 +15,7 @@ gpuctl.o: \
  arch/x86/include/uapi/asm/posix_types_64.h \
  include/uapi/asm-generic/posix_types.h include/linux/poison.h \
  include/linux/const.h include/vdso/const.h include/uapi/linux/const.h \
- include/linux/kernel.h include/linux/limits.h \
+ include/linux/kernel.h include/linux/align.h include/linux/limits.h \
  include/uapi/linux/limits.h include/vdso/limits.h \
  include/linux/linkage.h include/linux/stringify.h include/linux/export.h \
  include/linux/compiler.h arch/x86/include/generated/asm/rwonce.h \
@@ -54,11 +54,12 @@ gpuctl.o: \
  include/asm-generic/qrwlock_types.h include/linux/lockdep_types.h \
  include/linux/rwlock_types.h include/linux/dynamic_debug.h \
  include/linux/jump_label.h arch/x86/include/asm/jump_label.h \
- include/linux/stat.h arch/x86/include/uapi/asm/stat.h \
- include/uapi/linux/stat.h include/linux/time.h include/linux/math64.h \
- include/vdso/math64.h include/linux/time64.h include/vdso/time64.h \
- include/uapi/linux/time.h include/uapi/linux/time_types.h \
- include/linux/time32.h include/linux/timex.h include/uapi/linux/timex.h \
+ include/linux/static_call_types.h include/linux/stat.h \
+ arch/x86/include/uapi/asm/stat.h include/uapi/linux/stat.h \
+ include/linux/time.h include/linux/math64.h include/vdso/math64.h \
+ include/linux/time64.h include/vdso/time64.h include/uapi/linux/time.h \
+ include/uapi/linux/time_types.h include/linux/time32.h \
+ include/linux/timex.h include/uapi/linux/timex.h \
  arch/x86/include/asm/timex.h arch/x86/include/asm/processor.h \
  arch/x86/include/asm/processor-flags.h \
  arch/x86/include/uapi/asm/processor-flags.h include/linux/mem_encrypt.h \
@@ -78,26 +79,26 @@ gpuctl.o: \
  arch/x86/include/asm/pgtable_types.h \
  arch/x86/include/asm/pgtable_64_types.h arch/x86/include/asm/sparsemem.h \
  arch/x86/include/asm/nospec-branch.h include/linux/static_key.h \
- include/linux/objtool.h arch/x86/include/asm/alternative-asm.h \
- arch/x86/include/asm/msr-index.h arch/x86/include/asm/unwind_hints.h \
- arch/x86/include/asm/orc_types.h arch/x86/include/asm/proto.h \
- arch/x86/include/uapi/asm/ldt.h arch/x86/include/uapi/asm/sigcontext.h \
- arch/x86/include/asm/current.h arch/x86/include/asm/percpu.h \
- include/asm-generic/percpu.h include/linux/threads.h \
- include/linux/percpu-defs.h arch/x86/include/asm/page.h \
- arch/x86/include/asm/page_64.h include/linux/range.h \
- include/asm-generic/memory_model.h include/linux/pfn.h \
- include/asm-generic/getorder.h arch/x86/include/asm/msr.h \
- arch/x86/include/asm/msr-index.h \
+ include/linux/objtool.h arch/x86/include/asm/msr-index.h \
+ arch/x86/include/asm/unwind_hints.h arch/x86/include/asm/orc_types.h \
+ arch/x86/include/asm/proto.h arch/x86/include/uapi/asm/ldt.h \
+ arch/x86/include/uapi/asm/sigcontext.h arch/x86/include/asm/current.h \
+ arch/x86/include/asm/percpu.h include/asm-generic/percpu.h \
+ include/linux/threads.h include/linux/percpu-defs.h \
+ arch/x86/include/asm/page.h arch/x86/include/asm/page_64.h \
+ include/linux/range.h include/asm-generic/memory_model.h \
+ include/linux/pfn.h include/asm-generic/getorder.h \
+ arch/x86/include/asm/msr.h arch/x86/include/asm/msr-index.h \
  arch/x86/include/generated/uapi/asm/errno.h \
  include/uapi/asm-generic/errno.h include/uapi/asm-generic/errno-base.h \
  arch/x86/include/asm/cpumask.h include/linux/cpumask.h \
  include/linux/bitmap.h include/linux/string.h include/linux/errno.h \
  include/uapi/linux/errno.h include/uapi/linux/string.h \
  arch/x86/include/asm/string.h arch/x86/include/asm/string_64.h \
- include/linux/atomic.h arch/x86/include/asm/atomic.h \
- arch/x86/include/asm/cmpxchg.h arch/x86/include/asm/cmpxchg_64.h \
- arch/x86/include/asm/atomic64_64.h include/linux/atomic-arch-fallback.h \
+ include/linux/fortify-string.h include/linux/atomic.h \
+ arch/x86/include/asm/atomic.h arch/x86/include/asm/cmpxchg.h \
+ arch/x86/include/asm/cmpxchg_64.h arch/x86/include/asm/atomic64_64.h \
+ include/linux/atomic-arch-fallback.h \
  include/asm-generic/atomic-instrumented.h \
  include/asm-generic/atomic-long.h include/linux/bug.h \
  arch/x86/include/asm/bug.h include/linux/instrumentation.h \
@@ -138,16 +139,17 @@ gpuctl.o: \
  include/linux/timer.h include/linux/ktime.h include/linux/jiffies.h \
  include/vdso/jiffies.h include/generated/timeconst.h \
  include/vdso/ktime.h include/linux/timekeeping.h \
- include/linux/debugobjects.h include/linux/rcu_segcblist.h \
- include/linux/srcutree.h include/linux/rcu_node_tree.h \
- arch/x86/include/asm/mmu.h include/linux/page-flags.h \
- include/linux/memory_hotplug.h arch/x86/include/asm/mmzone.h \
- arch/x86/include/asm/mmzone_64.h include/linux/topology.h \
- include/linux/arch_topology.h include/linux/percpu.h \
- arch/x86/include/asm/topology.h arch/x86/include/asm/mpspec.h \
- arch/x86/include/asm/mpspec_def.h arch/x86/include/asm/x86_init.h \
- arch/x86/include/asm/apicdef.h include/asm-generic/topology.h \
- include/linux/sysctl.h include/uapi/linux/sysctl.h include/linux/elf.h \
+ include/linux/clocksource_ids.h include/linux/debugobjects.h \
+ include/linux/rcu_segcblist.h include/linux/srcutree.h \
+ include/linux/rcu_node_tree.h arch/x86/include/asm/mmu.h \
+ include/linux/page-flags.h include/linux/memory_hotplug.h \
+ arch/x86/include/asm/mmzone.h arch/x86/include/asm/mmzone_64.h \
+ include/linux/topology.h include/linux/arch_topology.h \
+ include/linux/percpu.h arch/x86/include/asm/topology.h \
+ arch/x86/include/asm/mpspec.h arch/x86/include/asm/mpspec_def.h \
+ arch/x86/include/asm/x86_init.h arch/x86/include/asm/apicdef.h \
+ include/asm-generic/topology.h include/linux/sysctl.h \
+ include/uapi/linux/sysctl.h include/linux/elf.h \
  arch/x86/include/asm/elf.h arch/x86/include/asm/user.h \
  arch/x86/include/asm/user_64.h arch/x86/include/asm/fsgsbase.h \
  arch/x86/include/asm/vdso.h include/uapi/linux/elf.h \
@@ -157,7 +159,7 @@ gpuctl.o: \
  include/linux/kconfig.h include/linux/kobject_ns.h include/linux/kref.h \
  include/linux/refcount.h include/linux/moduleparam.h \
  include/linux/rbtree_latch.h include/linux/error-injection.h \
- include/asm-generic/error-injection.h include/linux/static_call_types.h \
+ include/asm-generic/error-injection.h include/linux/cfi.h \
  arch/x86/include/asm/module.h include/asm-generic/module.h \
  arch/x86/include/asm/orc_types.h include/linux/ioport.h \
  include/linux/pci.h include/linux/mod_devicetable.h include/linux/uuid.h \
@@ -171,12 +173,11 @@ gpuctl.o: \
  include/linux/shm.h include/uapi/linux/shm.h \
  include/uapi/asm-generic/hugetlb_encode.h \
  arch/x86/include/uapi/asm/shmbuf.h include/uapi/asm-generic/shmbuf.h \
- arch/x86/include/asm/shmparam.h include/linux/kcov.h \
- include/uapi/linux/kcov.h include/linux/plist.h include/linux/hrtimer.h \
- include/linux/hrtimer_defs.h include/linux/timerqueue.h \
- include/linux/seccomp.h include/uapi/linux/seccomp.h \
- arch/x86/include/asm/seccomp.h arch/x86/include/asm/unistd.h \
- arch/x86/include/uapi/asm/unistd.h \
+ arch/x86/include/asm/shmparam.h include/linux/plist.h \
+ include/linux/hrtimer.h include/linux/hrtimer_defs.h \
+ include/linux/timerqueue.h include/linux/seccomp.h \
+ include/uapi/linux/seccomp.h arch/x86/include/asm/seccomp.h \
+ arch/x86/include/asm/unistd.h arch/x86/include/uapi/asm/unistd.h \
  arch/x86/include/generated/uapi/asm/unistd_64.h \
  arch/x86/include/generated/asm/unistd_64_x32.h \
  arch/x86/include/generated/asm/unistd_32_ia32.h \
@@ -247,7 +248,7 @@ gpuctl.o: \
  include/linux/assoc_array.h include/linux/sched/user.h \
  include/linux/rcu_sync.h include/linux/delayed_call.h \
  include/linux/errseq.h include/linux/ioprio.h include/linux/sched/rt.h \
- include/linux/iocontext.h include/linux/fs_types.h \
+ include/linux/iocontext.h include/linux/fs_types.h include/linux/mount.h \
  include/uapi/linux/fs.h include/linux/quota.h \
  include/linux/percpu_counter.h include/uapi/linux/dqblk_xfs.h \
  include/linux/dqblk_v1.h include/linux/dqblk_v2.h \

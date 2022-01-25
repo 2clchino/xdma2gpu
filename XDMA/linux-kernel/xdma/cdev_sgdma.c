@@ -371,11 +371,6 @@ static ssize_t char_sgdma_read_write(struct file *file, const char __user *buf,
 	dbg_tfr("file 0x%p, priv 0x%p, buf 0x%p,%llu, pos %llu, W %d, %s.\n",
 		file, file->private_data, buf, (u64)count, (u64)*pos, write,
 		engine->name);
-
-	if (write)
-	  printk("You write %d", engine->dir);
-	else
-	  printk("You read %d", engine->dir);
 	
 	if ((write && engine->dir != DMA_TO_DEVICE) ||
 	    (!write && engine->dir != DMA_FROM_DEVICE)) {
@@ -383,11 +378,7 @@ static ssize_t char_sgdma_read_write(struct file *file, const char __user *buf,
 			write, engine->dir);
 		return -EINVAL;
 	}
-	// printk("buf : %d", *buf);
-
-
-
-	  
+	
 	rv = check_transfer_align(engine, buf, count, *pos, 1);
 	if (rv) {
 		pr_info("Invalid transfer alignment detected\n");
@@ -751,25 +742,22 @@ static int ioctl_gpudirect(struct xdma_cdev *xcdev, struct xdma_engine *engine, 
 	struct scatterlist *sg;
 	struct xdma_dev *xdev;
 	struct gpudma_lock_t param;
-	struct xdma_data_ioctl *tmp;
-	struct xdma_data_ioctl data;
-	ssize_t res, n_byte = 0;
+	// struct xdma_data_ioctl *tmp;
+	// struct xdma_data_ioctl data;
+	ssize_t res = 0;
 	loff_t pos = 0;
 	int i = 0;
-	int ret, offset, rv;
+	int ret, offset;
 	uint64_t addr;
 	xdev = xcdev->xdev;
-	tmp = &data;
+	// tmp = &data;
 	// struct nvidia_p2p_dma_mapping *dma_mapping = NULL;
-	rv = copy_from_user(tmp,
-			    (struct xdma_data_ioctl __user *)arg,
-			    sizeof(struct xdma_data_ioctl));
-	if(copy_from_user(&param, (void *)tmp->lock, sizeof(struct gpudma_lock_t))) {
+	if(copy_from_user(&param, (void *)arg, sizeof(struct gpudma_lock_t))) {
 	  printk(KERN_ERR"%s(): Error in copy_from_user()\n", __FUNCTION__);
 	  // error = -EFAULT;
 	  // goto do_exit;
 	}
-	n_byte = sizeof(int) * tmp->count;
+	// n_byte = sizeof(int) * tmp->count;
 	if ((write && engine->dir != DMA_TO_DEVICE) ||
 	    (!write && engine->dir != DMA_FROM_DEVICE)) {
 	  pr_err("r/w mismatch. W %d, dir %d.\n",
@@ -789,25 +777,26 @@ static int ioctl_gpudirect(struct xdma_cdev *xcdev, struct xdma_engine *engine, 
 	memset(&cb, 0, sizeof(struct xdma_io_cb));
 	// dma_mapping = kmalloc(sizeof(struct nvidia_p2p_dma_mapping), GFP_KERNEL);
         addr = nv_p2p_get(&param, xcdev->xpdev->pdev, &cb.dma_mapping);
-	//printk("dma_mapping: %u", cb.dma_mapping->entries);
+	// printk("dma_mapping: %u", cb.dma_mapping->entries);
 	//printk("page_table: %u", cb.page_table->entries);
-	/*
-	for (i = 0; i < cb.dma_mapping->entries - 1; i++) {
-	  printk("%d Physical 0x%016llx\n", i,
+	
+	for (i = 0; i < cb.dma_mapping->entries; i++) {
+	  printk("%d Physical 0x%016llx\n", i + 1,
 		 cb.dma_mapping->dma_addresses[i]);
 	}
-	*/
+	
 	printk("User Space Address :0x%llx",(unsigned long long)addr);
 	ret = sg_alloc_table(sgt, cb.dma_mapping->entries, GFP_KERNEL);
 	if (ret) {
 	  // nvidia_p2p_dma_unmap_pages(pdev, page_table, dma_mapping);
 	  return ret;
 	}
-        len = GPU_BOUND_SIZE;
+        //len = param.size;
 	cb.pages_nr = cb.dma_mapping->entries;
-	offset = addr % len;
-	printk("addr %lld, offset %d, len - offset %ld", addr, offset, len - offset);
+	offset = addr % GPU_BOUND_SIZE;
+	printk("addr %lld, offset %d", addr, offset);
 	for_each_sg(sgt->sgl, sg, cb.pages_nr, i) {
+	  len = ((i + 1) >= cb.pages_nr) ? param.size % GPU_BOUND_SIZE : GPU_BOUND_SIZE;
 	  if (i == 0)
 	    sg_set_page(sg, NULL, len - offset, offset);
 	  else
@@ -843,34 +832,28 @@ static int ioctl_write(struct xdma_cdev *xcdev, struct xdma_engine *engine, unsi
 	struct xdma_io_cb cb;
 	struct xdma_data_ioctl *tmp;
 	struct xdma_data_ioctl data;
-        struct gpudma_lock_t param;
+        // struct gpudma_lock_t param;
         int *buf;
 	loff_t pos = 0;
 	size_t count;
-	int i = 0;
+	// int i = 0;
 	//uint64_t addr;
-	size_t n_byte;
 	struct xdma_dev *xdev;
 	xdev = xcdev->xdev;
 	tmp = &data;
 	rv = copy_from_user(tmp,
 		(struct xdma_data_ioctl __user *)arg,
 		sizeof(struct xdma_data_ioctl));
-	if(copy_from_user(&param, (void *)tmp->lock, sizeof(struct gpudma_lock_t))) {
-	  printk(KERN_ERR"%s(): Error in copy_from_user()\n", __FUNCTION__);
-	  // error = -EFAULT;
-	  // goto do_exit;
-	}
-	n_byte = sizeof(int) * tmp->count;
-	buf = kmalloc(n_byte, GFP_KERNEL);
+	buf = kmalloc(tmp->count, GFP_KERNEL);
 	rv = copy_from_user(buf,
 			    (char __user *)tmp->value,
-			    n_byte);
+			    tmp->count);
 	// tmp->value = &(str[0]);
 	xdev->read_write_data = *tmp;
-	for (i = 0; i < tmp->count; i++){
+	/*for (i = 0; i < tmp->count; i++){
 	  printk("str: %d: %d", i+1, buf[i]);
 	}
+	*/
 	
 	// printk("xdev: %s", xdev->read_write_data.value);
 	count = tmp->count;
@@ -889,7 +872,7 @@ static int ioctl_write(struct xdma_cdev *xcdev, struct xdma_engine *engine, unsi
 	
 	
 	cb.buf = (char __user *)tmp->value;
-	cb.len = n_byte;
+	cb.len = count;
 	cb.ep_addr = (u64)pos;
 	cb.write = write;
 	rv = char_sgdma_map_user_buf_to_sgl(&cb, write);
