@@ -3,8 +3,12 @@
 *.o
 *.out
 *.ko
+*.txt
+*#
 XDMA/linux-kernel/NVIDIA-Linux-x86_64-470.57.02.run
 XDMA/linux-kernel/bin
 XDMA/linux-kernel/NVIDIA-Linux-x86_64-470.57.02/
 XDMA/linux-kernel/NVIDIA-Linux-x86_64-470.74/
 XDMA/linux-kernel/nvidia
+XDMA/linux-kernel/NVIDIA-Linux-x86_64-470.86.run
+XDMA/linux-kernel/NVIDIA-Linux-x86_64-470.86/

@@ -45,10 +45,10 @@ static void free_nvp_callback(void *data)
 
 uint64_t nv_p2p_get(struct gpudma_lock_t *param, struct pci_dev *pdev, struct nvidia_p2p_dma_mapping **dma_mapping){
     int error = 0;
-    int ret, i;
+    int ret, get_page_size;
     size_t pin_size = 0ULL;
     struct gpumem_t *entry = 0;
-    volatile int *ptr;
+    // volatile int *ptr;
     // struct gpudma_lock_t param;
     // struct nvidia_p2p_dma_mapping *dma_mapping = NULL;
     // printk("gpuctl:%u", pdev->vendor);
@@ -88,14 +88,16 @@ uint64_t nv_p2p_get(struct gpudma_lock_t *param, struct pci_dev *pdev, struct nv
     printk("entry->page_table->page_size: %u\n", entry->page_table->page_size);
     // printk("pages: %pr\n", entry->page_table->pages);
     param->page_count = entry->page_table->entries;
+    get_page_size = (entry->page_table->page_size * entry->page_table->entries);
+    printk("get_page_size : %d, page_size : %d, entries : %d", get_page_size, entry->page_table->page_size, entry->page_table->entries);
     param->handle = entry;
     // dma_mapping = kmalloc(sizeof(struct nvidia_p2p_dma_mapping), GFP_KERNEL);
     // if (!dma_mapping)
     //   goto do_free_mem;
     // printk("0x%llx", entry->page_table->pages[0]->physical_address);
-    ptr = ioremap(entry->page_table->pages[0]->physical_address, sizeof(int)*3);
-    printk("ptr : %p", ptr);
-    printk("ptr value : %d", *ptr);
+    // ptr = ioremap(entry->page_table->pages[0]->physical_address, sizeof(int)*3);
+    // printk("ptr : %p", ptr);
+    // printk("ptr value : %d", *ptr);
     // *ptr = 50;
     
     ret = nvfs_nvidia_p2p_dma_map_pages(pdev, entry->page_table, dma_mapping);

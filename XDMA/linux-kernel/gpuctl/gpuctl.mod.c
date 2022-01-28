@@ -31,7 +31,6 @@ __used __section("__versions") = {
 	{ 0xbd0c4c0c, "kmalloc_caches" },
 	{ 0x409bcb62, "mutex_unlock" },
 	{ 0xc5850110, "printk" },
-	{ 0xde80cd09, "ioremap" },
 	{ 0x2ab7989d, "mutex_lock" },
 	{ 0x868784cb, "__symbol_get" },
 	{ 0x2ea2c95c, "__x86_indirect_thunk_rax" },
@@ -44,4 +43,4 @@ __used __section("__versions") = {
 MODULE_INFO(depends, "");
 
 
-MODULE_INFO(srcversion, "63F62E1C3DE63FEE0D7F626");
+MODULE_INFO(srcversion, "AA4BB8CFA4003FBC781CFD6");

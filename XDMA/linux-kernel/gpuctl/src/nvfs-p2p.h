@@ -25,6 +25,8 @@
 
 #include "nv-p2p.h"
 
+extern struct mutex module_mutex;
+
 typedef int (*nvidia_p2p_dma_unmap_pages_fptr) (struct pci_dev*,
 		struct nvidia_p2p_page_table*,
 		struct nvidia_p2p_dma_mapping*);

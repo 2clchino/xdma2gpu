@@ -21,7 +21,7 @@
 
 
 // #define IOCTL_XDMA_WRITE          _IOR('q', 8, struct xdma_data_ioctl *)
-# define N 100
+# define N 240
 typedef struct xdma_data_ioctl{
   int *value;
   size_t count;
@@ -118,6 +118,7 @@ int main(){
   
   int *arr1, *arr2;
   size_t n_byte = N * sizeof(int);
+  int diff = 0;
   arr1 = (int *)malloc(n_byte);
   arr2 = (int *)malloc(n_byte);
   for (int i = 0; i < N; i++){
@@ -176,7 +177,14 @@ int main(){
   printf("addr: 0x%llx, size: %ld\n", (unsigned long long)lock.addr, lock.size);
   cuMemcpyDtoH(&arr2[0], (unsigned long long)dptr, lock.size);
   for (int i = 0; i < N; i++){
-    printf("%d -> %d\n",arr1[i], arr2[i]);
+    printf("%d -> %d\n", arr1[i], arr2[i]);
+  }
+  
+  for (int i = 0; i < N;i++){
+    if(arr1[i]!=arr2[i] + diff){
+      diff = arr1[i] - arr2[i];
+      printf("%d -> %d\n", arr1[i], arr2[i]);
+    }
   }
   
   // ------------------------------------------------------------

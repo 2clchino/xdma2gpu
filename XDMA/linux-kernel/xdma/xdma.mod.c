@@ -138,6 +138,7 @@ __used __section("__versions") = {
 	{ 0xb23f5abe, "pci_enable_device" },
 	{ 0x13c49cc2, "_copy_from_user" },
 	{ 0xd0210779, "param_ops_uint" },
+	{ 0x43f84b37, "nv_p2p_get" },
 	{ 0xbffcce80, "__class_create" },
 	{ 0x88db9f48, "__check_object_size" },
 	{ 0xe3ec2f2b, "alloc_chrdev_region" },
@@ -151,7 +152,7 @@ __used __section("__versions") = {
 	{ 0x8a35b432, "sme_me_mask" },
 };
 
-MODULE_INFO(depends, "");
+MODULE_INFO(depends, "gpuctl");
 
 MODULE_ALIAS("pci:v000010EEd00009048sv*sd*bc*sc*i*");
 MODULE_ALIAS("pci:v000010EEd00009044sv*sd*bc*sc*i*");
@@ -210,4 +211,4 @@ MODULE_ALIAS("pci:v000010EEd00002808sv*sd*bc*sc*i*");
 MODULE_ALIAS("pci:v00001D0Fd0000F000sv*sd*bc*sc*i*");
 MODULE_ALIAS("pci:v00001D0Fd0000F001sv*sd*bc*sc*i*");
 
-MODULE_INFO(srcversion, "8CA17F26A6EAC76282EBEBB");
+MODULE_INFO(srcversion, "90BDB88246CD59778C146ED");

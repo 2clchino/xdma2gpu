@@ -264,6 +264,6 @@ gpuctl.o: \
  include/linux/proc_fs.h \
  /home/lab/shun/dma_ip_drivers/XDMA/linux-kernel/gpuctl/./src/gpumemdrv.h \
  include/linux/cdev.h include/generated/uapi/linux/version.h \
- /home/lab/shun/dma_ip_drivers/XDMA/linux-kernel/NVIDIA-Linux-x86_64-470.74/kernel/nvidia/nv-p2p.h \
+ /home/lab/shun/dma_ip_drivers/XDMA/linux-kernel/NVIDIA-Linux-x86_64-470.86/kernel/nvidia/nv-p2p.h \
  /home/lab/shun/dma_ip_drivers/XDMA/linux-kernel/gpuctl/./src/gpuctl.h \
  /home/lab/shun/dma_ip_drivers/XDMA/linux-kernel/gpuctl/./src/nvfs-p2p.h

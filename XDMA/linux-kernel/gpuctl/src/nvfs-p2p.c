@@ -29,7 +29,7 @@
 
 MODULE_LICENSE("GPL v2");
 
-extern struct mutex module_mutex;
+struct mutex module_mutex;
 
 static nvidia_p2p_dma_unmap_pages_fptr nvidia_p2p_dma_unmap_pages_p = NULL;
 static nvidia_p2p_get_pages_fptr nvidia_p2p_get_pages_p = NULL;

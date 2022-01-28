@@ -780,10 +780,10 @@ static int ioctl_gpudirect(struct xdma_cdev *xcdev, struct xdma_engine *engine, 
 	// printk("dma_mapping: %u", cb.dma_mapping->entries);
 	//printk("page_table: %u", cb.page_table->entries);
 	
-	for (i = 0; i < cb.dma_mapping->entries; i++) {
+	/*for (i = 0; i < cb.dma_mapping->entries; i++) {
 	  printk("%d Physical 0x%016llx\n", i + 1,
 		 cb.dma_mapping->dma_addresses[i]);
-	}
+		 }*/
 	
 	printk("User Space Address :0x%llx",(unsigned long long)addr);
 	ret = sg_alloc_table(sgt, cb.dma_mapping->entries, GFP_KERNEL);

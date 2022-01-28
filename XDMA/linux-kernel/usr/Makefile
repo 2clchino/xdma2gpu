@@ -9,7 +9,7 @@ CC = $(CROSS_COMPILE)gcc
 LD = $(CROSS_COMPILE)gcc
 
 #NVIDIA_DRIVER_PATH := $(HOME)/gpudma/nvidia
-NVIDIA_DRIVER_PATH := ../NVIDIA-Linux-x86_64-470.74
+NVIDIA_DRIVER_PATH := ../NVIDIA-Linux-x86_64-470.86
 CUDADIR:=/opt/nvidia/hpc_sdk/Linux_x86_64/21.9/cuda/11.4/targets/x86_64-linux
 
 
