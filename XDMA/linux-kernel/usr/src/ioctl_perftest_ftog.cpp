@@ -189,6 +189,7 @@ int main(){
     if (n_iter>max_iter) n_iter = max_iter;
     auto start = std::chrono::system_clock::now();
     for (int i = 0; i < n_iter; i++){
+      lseek( fd_i, 0, SEEK_SET);
       ioctl( fd_i, IOCTL_XDMA_GPU_READ, &lock);
     }
     auto stop = std::chrono::system_clock::now();

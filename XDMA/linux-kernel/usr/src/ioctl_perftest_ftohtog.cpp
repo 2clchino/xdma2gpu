@@ -185,6 +185,7 @@ int main(){
     if (n_iter>max_iter) n_iter = max_iter;
     auto start = std::chrono::system_clock::now();
     for (int i = 0; i < n_iter; i++){
+      lseek( fd_i, 0, SEEK_SET);
       read( fd_i, &arr2[0], n_byte);
       cuMemcpyHtoD((unsigned long long)dptr, &arr2[0], n_byte);
       // ioctl( fd_i, IOCTL_XDMA_GPU_READ, &lock);
