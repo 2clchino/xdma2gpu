@@ -81,7 +81,7 @@ int main(){
   parallel_read read_data;
   int min_size = 16;
   int max_iter = 100;
-  static const int bufsize = 512*1024*1024;
+  static const int bufsize = 32*1024*1024;
   
   int fd_o = open("/dev/xdma0_h2c_0", O_WRONLY);
   if (fd_o < 0){
@@ -185,6 +185,7 @@ int main(){
     if(wasError(status)) {
       goto do_free_memory;
     }
+    lock.size = size;
     int n_iter = (bufsize/4)/size;
     if (n_iter>max_iter) n_iter = max_iter;
     auto start = std::chrono::system_clock::now();
@@ -198,8 +199,8 @@ int main(){
     auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
   
     std::cout << "# size:" << size << " " << msec << " ms. "
-	      << (double)N*4000.0f*n_iter/(msec) << " B/s, n_iter:" << n_iter << "\n";
-    std::cout << size << " " << ((double)N*4000.0f*n_iter/(msec))/(1000 * 1000 * 1000) << " \n";
+	      << (double)size*4000.0f*n_iter/(msec) << " B/s, n_iter:" << n_iter << "\n";
+    std::cout << size << " " << ((double)size*4000.0f*n_iter/(msec))/(1000 * 1000 * 1000) << " \n";
     cuPointerSetAttribute(&flag, CU_POINTER_ATTRIBUTE_SYNC_MEMOPS, dptr);
   }
   // ioctl(fd_o, IOCTL_XDMA_GPU_WRITE, &lock);

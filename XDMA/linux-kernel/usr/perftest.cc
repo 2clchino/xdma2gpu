@@ -71,7 +71,7 @@ int main(){
     auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
     
     std::cout << size << " " << msec << " ms. "
-              << (double)size*4000.0f*msec/(n_iter) << " B/s\n";
+              << (double)size*4000.0f*n_iter/(msec) << " B/s\n";
   }
   
   // for (int i=0; i<msg_len; i++){
