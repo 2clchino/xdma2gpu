@@ -34,11 +34,19 @@ $(TARGET_NAME): $(OBJFILE)
 
 include $(wildcard *.d)
 
-ftog:	$(patsubst %.cpp,%.o, ./src/ioctl_parallel_test_ftog.cpp)
+ftog:	$(patsubst %.cpp,%.o, ./src/ioctl_test_ftog.cpp)
 	$(LD) $(notdir $^) -o ftog $(LDFLAGS)
 	cp ftog ../bin
 
-gtof:	$(patsubst %.cpp,%.o, ./src/ioctl_parallel_test_gtof.cpp)
+ftogprf:$(patsubst %.cpp,%.o, ./src/ioctl_perftest_ftog.cpp)
+	$(LD) $(notdir $^) -o ftogprf $(LDFLAGS)
+	cp ftogprf ../bin
+
+ftohtogprf:$(patsubst %.cpp,%.o, ./src/ioctl_perftest_ftohtog.cpp)
+	$(LD) $(notdir $^) -o ftohtogprf $(LDFLAGS)
+	cp ftohtogprf ../bin
+
+gtof:	$(patsubst %.cpp,%.o, ./src/ioctl_test_gtof.cpp)
 	$(LD) $(notdir $^) -o gtof $(LDFLAGS)
 	cp gtof ../bin
 

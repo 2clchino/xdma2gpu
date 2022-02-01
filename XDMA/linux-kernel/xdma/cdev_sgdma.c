@@ -785,7 +785,7 @@ static int ioctl_gpudirect(struct xdma_cdev *xcdev, struct xdma_engine *engine, 
 		 cb.dma_mapping->dma_addresses[i]);
 		 }*/
 	
-	printk("User Space Address :0x%llx",(unsigned long long)addr);
+	// printk("User Space Address :0x%llx",(unsigned long long)addr);
 	ret = sg_alloc_table(sgt, cb.dma_mapping->entries, GFP_KERNEL);
 	if (ret) {
 	  // nvidia_p2p_dma_unmap_pages(pdev, page_table, dma_mapping);
@@ -794,20 +794,18 @@ static int ioctl_gpudirect(struct xdma_cdev *xcdev, struct xdma_engine *engine, 
         //len = param.size;
 	cb.pages_nr = cb.dma_mapping->entries;
 	offset = addr % GPU_BOUND_SIZE;
-	printk("addr %lld, offset %d", addr, offset);
+	// printk("addr %lld, offset %d", addr, offset);
+	len = GPU_BOUND_SIZE;
 	for_each_sg(sgt->sgl, sg, cb.pages_nr, i) {
-	  len = ((i + 1) >= cb.pages_nr) ? param.size % GPU_BOUND_SIZE : GPU_BOUND_SIZE;
-	  if (i == 0)
-	    sg_set_page(sg, NULL, len - offset, offset);
-	  else
-	    sg_set_page(sg, NULL, len, 0);
+	  len = ((i + 1) >= cb.pages_nr) && (param.size % GPU_BOUND_SIZE != 0) ?
+	    param.size % GPU_BOUND_SIZE : GPU_BOUND_SIZE;
+	  //if (i == 0)
+	  //sg_set_page(sg, NULL, len - offset, offset);
+	  //else
+	  sg_set_page(sg, NULL, len, 0);
 	  sg->dma_address = cb.dma_mapping->dma_addresses[i];
 	  sg->dma_length = len;
 	}
-	if (write)
-	  printk("You write %d", engine->dir);
-	else
-	  printk("You read %d", engine->dir);
 	res = xdma_xfer_submit(xdev, engine->channel, write, pos, &cb.sgt,
 			       1, write ? h2c_timeout * 1000 :
 			       c2h_timeout * 1000);
@@ -898,20 +896,20 @@ static int ioctl_write(struct xdma_cdev *xcdev, struct xdma_engine *engine, unsi
 
 static int ioctl_try(struct xdma_engine *engine, unsigned long arg)
 {
-	int rv;
+  /*int rv;
         struct xdma_data_ioctl *tmp;
 	struct xdma_data_ioctl data;
 	char str[95];
 	tmp = &data;
-
+  */
 	printk("bbb");
-	rv = copy_from_user(tmp,
+	/*rv = copy_from_user(tmp,
 		(struct xdma_data_ioctl __user *)arg,
 		sizeof(struct xdma_data_ioctl));
 	rv = copy_from_user(str,
 			    (char __user *)tmp->value,
 			    tmp->count);
-	printk("str: %s", str);
+			    printk("str: %s", str);*/
 	// printk("str.value: %s", tmp->value);
 	// printk("ccc");
 	return 0;

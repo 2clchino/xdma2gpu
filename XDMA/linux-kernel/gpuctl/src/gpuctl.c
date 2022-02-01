@@ -70,7 +70,7 @@ uint64_t nv_p2p_get(struct gpudma_lock_t *param, struct pci_dev *pdev, struct nv
     entry->handle = entry;
 
     entry->virt_start = (param->addr & GPU_BOUND_MASK);
-    printk("%lld", entry->virt_start);
+    // printk("%lld", entry->virt_start);
     pin_size = (param->addr + param->size - entry->virt_start);
     if(!pin_size) {
         printk(KERN_ERR"%s(): Error invalid memory size!\n", __FUNCTION__);
@@ -85,11 +85,11 @@ uint64_t nv_p2p_get(struct gpudma_lock_t *param, struct pci_dev *pdev, struct nv
         goto do_free_mem;
     }
     // printk("entry->page_table->entries: %u\n", entry->page_table->entries);
-    printk("entry->page_table->page_size: %u\n", entry->page_table->page_size);
+    // printk("entry->page_table->page_size: %u\n", entry->page_table->page_size);
     // printk("pages: %pr\n", entry->page_table->pages);
     param->page_count = entry->page_table->entries;
     get_page_size = (entry->page_table->page_size * entry->page_table->entries);
-    printk("get_page_size : %d, page_size : %d, entries : %d", get_page_size, entry->page_table->page_size, entry->page_table->entries);
+    // printk("get_page_size : %d, page_size : %d, entries : %d", get_page_size, entry->page_table->page_size, entry->page_table->entries);
     param->handle = entry;
     // dma_mapping = kmalloc(sizeof(struct nvidia_p2p_dma_mapping), GFP_KERNEL);
     // if (!dma_mapping)
@@ -117,8 +117,8 @@ uint64_t nv_p2p_get(struct gpudma_lock_t *param, struct pci_dev *pdev, struct nv
 	ndmachunks += 1;
     }
     */
-    //printk("dma_mapping->entries: %u", dma_mapping->entries);
-    printk(KERN_ERR"%s(): param->handle: %p\n", __FUNCTION__, param->handle);
+    // printk("dma_mapping->entries: %u", dma_mapping->entries);
+    // printk(KERN_ERR"%s(): param->handle: %p\n", __FUNCTION__, param->handle);
     /*
     if(copy_to_user((void *)arg, &param, sizeof(struct gpudma_lock_t))) {
         printk(KERN_ERR"%s(): Error in copy_from_user()\n", __FUNCTION__);
@@ -128,7 +128,7 @@ uint64_t nv_p2p_get(struct gpudma_lock_t *param, struct pci_dev *pdev, struct nv
     */
     // list_add_tail(&entry->list, &drv->table_list);
 
-    printk(KERN_ERR"%s(): Add new entry. handle: %p\n", __FUNCTION__, entry->handle);
+    // printk(KERN_ERR"%s(): Add new entry. handle: %p\n", __FUNCTION__, entry->handle);
 
     return param->addr;
 
