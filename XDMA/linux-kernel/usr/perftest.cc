@@ -62,8 +62,8 @@ int main(){
     auto start = std::chrono::system_clock::now();
 
     for (int i=0; i<n_iter; i++){
-      write(fd_o, &txbuf[buf_offset], msg_len*4);
-      read (fd_i, &rxbuf[buf_offset], msg_len*4);
+      write(fd_o, &txbuf[buf_offset], size*4);
+      read (fd_i, &rxbuf[buf_offset], size*4);
     }
     auto stop = std::chrono::system_clock::now();
     
@@ -71,7 +71,7 @@ int main(){
     auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
     
     std::cout << size << " " << msec << " ms. "
-              << (double)msg_len*4000.0f*n_iter/(msec) << " B/s\n";
+              << (double)size*4000.0f*msec/(n_iter) << " B/s\n";
   }
   
   // for (int i=0; i<msg_len; i++){
