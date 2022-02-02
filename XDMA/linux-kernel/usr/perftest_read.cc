@@ -10,8 +10,8 @@ int main(){
   static const int bufsize= 512*1024*1024;
   static const int buf_offset = 13;
   int msg_len = 32*1024*1024;  // must be even
-  int min_size = 1024*1024;
-  int max_iter = 100;
+  int min_size = 16;
+  int max_iter = 1000;
   
   // ------------------------------------------------------------
   // Open XDMA channels
@@ -55,7 +55,7 @@ int main(){
     txbuf[i+buf_offset] = i; // %256;
   }
   write(fd_o, &txbuf[buf_offset], msg_len*4);
-  for (int size=min_size; size<=bufsize/4; size*=2){
+  for (int size=min_size; size<=msg_len; size*=2){
     int n_iter = (bufsize/4)/size;
     if (n_iter>max_iter) n_iter = max_iter;
     //std::cout << "size" << size << "bufsize" << bufsize << "n_iter" << n_iter << "\n";
@@ -63,7 +63,7 @@ int main(){
 
     for (int i=0; i<n_iter; i++){
       
-      read (fd_i, &rxbuf[buf_offset], msg_len*4);
+      read (fd_i, &rxbuf[buf_offset], size*4);
     }
     auto stop = std::chrono::system_clock::now();
     
@@ -71,8 +71,8 @@ int main(){
     auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
     
     std::cout << "# " << size << " " << msec << " ms. "
-              << (double)msg_len*4000.0f*n_iter/(msec) << " B/s\n";
-    std::cout << size << " " << (double)msg_len*4000.0f*n_iter/(msec)/(1000 * 1000 * 1000) << " \n";
+              << (double)size*4000.0f*n_iter/(msec) << " B/s\n";
+    std::cout << size*4 << " " << (double)size*4000.0f*n_iter/(msec)/(1000 * 1000 * 1000) << " \n";
   }
   
   // for (int i=0; i<msg_len; i++){

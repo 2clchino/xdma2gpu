@@ -48,8 +48,8 @@ ioctl_perftest_ftog.o: src/ioctl_perftest_ftog.cpp \
  /usr/include/c++/9/bits/std_abs.h \
  /usr/lib/gcc/x86_64-linux-gnu/9/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/wchar.h \
- /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h ../gpuctl/src/gpuctl.h \
- ../xdma/cdev_sgdma.h /usr/include/linux/ioctl.h \
+ /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h src/ioctl_gpu.h \
+ ../gpuctl/src/gpuctl.h ../xdma/cdev_sgdma.h /usr/include/linux/ioctl.h \
  /usr/include/x86_64-linux-gnu/asm/ioctl.h \
  /usr/include/asm-generic/ioctl.h /usr/include/c++/9/chrono \
  /usr/include/c++/9/ratio /usr/include/c++/9/type_traits \

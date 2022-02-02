@@ -50,6 +50,14 @@ gtof:	$(patsubst %.cpp,%.o, ./src/ioctl_test_gtof.cpp)
 	$(LD) $(notdir $^) -o gtof $(LDFLAGS)
 	cp gtof ../bin
 
+prod:	$(patsubst %.cpp,%.o, ./src/ioctl_gpu.cpp ./src/ioctl_prod.cpp)
+	$(LD) $(notdir $^) -o prod $(LDFLAGS)
+	cp prod ../bin
+
+gpu:	$(patsubst %.cpp,%.o, ./src/ioctl_gpu.cpp)
+	$(LD) $(notdir $^) -o gpu $(LDFLAGS)
+	cp gpu ../bin
+
 clean:
 	rm -f *.o *~ core
 	rm -f *.d *~ core
