@@ -186,8 +186,8 @@ int main(){
     auto start = std::chrono::system_clock::now();
     for (int i = 0; i < n_iter; i++){
       //lseek( fd_i, 0, SEEK_SET);
-      read( fd_i, &arr2[0], size*4);
-      cuMemcpyHtoD((unsigned long long)dptr, &arr2[0], size*4);
+      // read( fd_i, &arr2[0], size*4);
+      cuMemcpyHtoD((unsigned long long)dptr, &arr1[0], size*4);
       // ioctl( fd_i, IOCTL_XDMA_GPU_READ, &lock);
     }
     auto stop = std::chrono::system_clock::now();
