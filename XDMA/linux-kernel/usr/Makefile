@@ -58,6 +58,10 @@ gpu:	$(patsubst %.cpp,%.o, ./src/ioctl_gpu.cpp)
 	$(LD) $(notdir $^) -o gpu $(LDFLAGS)
 	cp gpu ../bin
 
+htogprf:$(patsubst %.cpp,%.o, ./src/ioctl_perftest_htog.cpp)
+	$(LD) $(notdir $^) -o htog $(LDFLAGS)
+	cp htog ../bin
+
 clean:
 	rm -f *.o *~ core
 	rm -f *.d *~ core

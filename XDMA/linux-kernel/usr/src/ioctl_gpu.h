@@ -4,6 +4,7 @@
 #include "gpuctl.h"
 #include "cdev_sgdma.h"
 
+#include <unistd.h> // read(), write(), open(), close()
 #include <dirent.h>
 #include <signal.h>
 #include <stdint.h>
@@ -18,4 +19,6 @@
 
 int xdma2gpu(int fd, uint64_t addr, uint64_t size);
 int gpu2xdma(int fd, uint64_t addr, uint64_t size);
+void checkError(CUresult status);
+bool wasError(CUresult status);
 #endif

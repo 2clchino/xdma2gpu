@@ -50,7 +50,13 @@ ioctl_gpu.o: src/ioctl_gpu.cpp /usr/include/stdc-predef.h src/ioctl_gpu.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h ../gpuctl/src/gpuctl.h \
  ../xdma/cdev_sgdma.h /usr/include/linux/ioctl.h \
  /usr/include/x86_64-linux-gnu/asm/ioctl.h \
- /usr/include/asm-generic/ioctl.h /usr/include/dirent.h \
+ /usr/include/asm-generic/ioctl.h /usr/include/unistd.h \
+ /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
+ /usr/include/x86_64-linux-gnu/bits/environments.h \
+ /usr/include/x86_64-linux-gnu/bits/confname.h \
+ /usr/include/x86_64-linux-gnu/bits/getopt_posix.h \
+ /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
+ /usr/include/x86_64-linux-gnu/bits/unistd_ext.h /usr/include/dirent.h \
  /usr/include/x86_64-linux-gnu/bits/dirent.h \
  /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
  /usr/include/x86_64-linux-gnu/bits/local_lim.h \

@@ -1,4 +1,5 @@
 ioctl_prod.o: src/ioctl_prod.cpp /usr/include/stdc-predef.h \
+ src/ioctl_gpu.h \
  /opt/nvidia/hpc_sdk/Linux_x86_64/21.9/cuda/11.4/targets/x86_64-linux/include/cuda.h \
  /usr/include/c++/9/stdlib.h /usr/include/c++/9/cstdlib \
  /usr/include/x86_64-linux-gnu/c++/9/bits/c++config.h \
@@ -47,10 +48,16 @@ ioctl_prod.o: src/ioctl_prod.cpp /usr/include/stdc-predef.h \
  /usr/include/c++/9/bits/std_abs.h \
  /usr/lib/gcc/x86_64-linux-gnu/9/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/wchar.h \
- /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h src/ioctl_gpu.h \
- ../gpuctl/src/gpuctl.h ../xdma/cdev_sgdma.h /usr/include/linux/ioctl.h \
+ /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h ../gpuctl/src/gpuctl.h \
+ ../xdma/cdev_sgdma.h /usr/include/linux/ioctl.h \
  /usr/include/x86_64-linux-gnu/asm/ioctl.h \
- /usr/include/asm-generic/ioctl.h /usr/include/dirent.h \
+ /usr/include/asm-generic/ioctl.h /usr/include/unistd.h \
+ /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
+ /usr/include/x86_64-linux-gnu/bits/environments.h \
+ /usr/include/x86_64-linux-gnu/bits/confname.h \
+ /usr/include/x86_64-linux-gnu/bits/getopt_posix.h \
+ /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
+ /usr/include/x86_64-linux-gnu/bits/unistd_ext.h /usr/include/dirent.h \
  /usr/include/x86_64-linux-gnu/bits/dirent.h \
  /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
  /usr/include/x86_64-linux-gnu/bits/local_lim.h \
@@ -107,11 +114,4 @@ ioctl_prod.o: src/ioctl_prod.cpp /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/mman.h \
  /usr/include/x86_64-linux-gnu/bits/mman-map-flags-generic.h \
  /usr/include/x86_64-linux-gnu/bits/mman-linux.h \
- /usr/include/x86_64-linux-gnu/bits/mman-shared.h /usr/include/unistd.h \
- /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
- /usr/include/x86_64-linux-gnu/bits/environments.h \
- /usr/include/x86_64-linux-gnu/bits/confname.h \
- /usr/include/x86_64-linux-gnu/bits/getopt_posix.h \
- /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
- /usr/include/x86_64-linux-gnu/bits/unistd_ext.h /usr/include/string.h \
- /usr/include/strings.h
+ /usr/include/x86_64-linux-gnu/bits/mman-shared.h
