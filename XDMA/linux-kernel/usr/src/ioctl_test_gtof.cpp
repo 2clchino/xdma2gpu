@@ -21,7 +21,7 @@
 
 
 // #define IOCTL_XDMA_WRITE          _IOR('q', 8, struct xdma_data_ioctl *)
-# define N 32
+# define N 16
 typedef struct xdma_data_ioctl{
   int *value;
   size_t count;
